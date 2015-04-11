@@ -116,7 +116,11 @@ public class Project {
     }
 
 
-    public int incAndGetLastGroupId() {
+    public synchronized int incAndGetLastGroupId() {
         return ++lastGroupId;
+    }
+
+    public synchronized int incAndGetLastRoleId() {
+        return ++lastRoleId;
     }
 }
