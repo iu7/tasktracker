@@ -33,7 +33,7 @@ public class GroupResource {
     @GET
     @Path("{projectName}/groups/{id}")
     public Group getGroup(@PathParam("id") int id, @PathParam("projectName") String projectName) {
-        GroupPrimaryKeys pk = new GroupPrimaryKeys(id, projectName);
+        GroupPK pk = new GroupPK(id, projectName);
         Group group = em.find(Group.class, pk);
         return group;
     }
@@ -75,7 +75,7 @@ public class GroupResource {
     @DELETE
     @Path("{projectName}/groups/{id}")
     public void deleteGroup(@PathParam("id") int id, @PathParam("projectName") String projectName) {
-        GroupPrimaryKeys pk = new GroupPrimaryKeys(id, projectName);
+        GroupPK pk = new GroupPK(id, projectName);
         Group group = em.find(Group.class, pk);
         em.remove(group);
     }
@@ -85,7 +85,7 @@ public class GroupResource {
     public Response updateName(@PathParam("projectName") String projectName, @PathParam("id") int id,
                                     JAXBElement<Group> groupJaxb) {
 
-        GroupPrimaryKeys pk = new GroupPrimaryKeys(id, projectName);
+        GroupPK pk = new GroupPK(id, projectName);
 
         // find project by name
         Group group = em.find(Group.class, pk);
@@ -114,7 +114,7 @@ public class GroupResource {
     public Response updateDescription(@PathParam("projectName") String projectName, @PathParam("id") int id,
                                       JAXBElement<Group> groupJaxb) {
 
-        GroupPrimaryKeys pk = new GroupPrimaryKeys(id, projectName);
+        GroupPK pk = new GroupPK(id, projectName);
 
         // find project by name
         Group group = em.find(Group.class, pk);

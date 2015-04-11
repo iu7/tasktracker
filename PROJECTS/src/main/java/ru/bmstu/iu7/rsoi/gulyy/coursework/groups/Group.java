@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 
 @Entity
-@IdClass(GroupPrimaryKeys.class)
+@IdClass(GroupPK.class)
 @NamedQuery(name = Group.FIND_ALL_FOR_PROJECT, query = "SELECT g FROM Group g WHERE g.projectName = ?1")
 @Table(name = "GROUPS")
 public class Group {
@@ -63,12 +63,3 @@ public class Group {
     }
 }
 
-class GroupPrimaryKeys implements Serializable {
-    private int id;
-    private String projectName;
-
-    public GroupPrimaryKeys(int id, String projectName) {
-        this.id = id;
-        this.projectName = projectName;
-    }
-}
