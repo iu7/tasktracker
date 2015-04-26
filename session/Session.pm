@@ -21,11 +21,10 @@ our %EXPORT_TAGS = (
 	all => [ @EXPORT_OK ],
 );
 
-# seconds
-sub SESSION_EXPIRATION_TIME()	{ 10 }
 sub SESSION_ID_KEY()		{ 'session_id' }
 
 my $__memcached;
+my $SESSION_EXPIRATION_TIME;
 BEGIN {
 	my $path2config = "$ENV{ETC_DIRECTORY}/session.conf";
 
@@ -35,6 +34,7 @@ BEGIN {
 	});
 
 	$__memcached->add(SESSION_ID_KEY(), 0);
+	$SESSION_EXPIRATION_TIME = $config{SESSION}{'expiration-perion'};
 }
 
 sub __session_generate_token
@@ -73,7 +73,7 @@ sub session_login
 	return (500, q{}) unless defined $id;
 
 	return (500, q{})
-		unless $__memcached->set($id . $token, $login, SESSION_EXPIRATION_TIME());
+		unless $__memcached->set($id . $token, $login, $SESSION_EXPIRATION_TIME);
 
 	return (201, to_json({ id => $id, token => $token }));
 }
@@ -91,7 +91,7 @@ sub session_check
 	return (401, q{}) unless $login;
 
 	return (500, q{}) # update expiration time
-		unless $check_only or $__memcached->set($key, $login, SESSION_EXPIRATION_TIME());
+		unless $check_only or $__memcached->set($key, $login, $SESSION_EXPIRATION_TIME);
 
 	return (200, to_json({ login => $login }));
 }
