@@ -40,6 +40,9 @@ public class Project {
     @Column(name = "last_priority_id")
     private int lastPriorityId;
 
+    @Column(name = "last_issue_type_id")
+    private int lastIssueTypeId;
+
     public Project() {
     }
 
@@ -115,6 +118,17 @@ public class Project {
         this.lastPriorityId = lastPriorityId;
     }
 
+    public int getLastIssueTypeId() {
+        return lastIssueTypeId;
+    }
+
+    public void setLastIssueTypeId(int lastIssueTypeId) {
+        this.lastIssueTypeId = lastIssueTypeId;
+    }
+
+    public synchronized Long incAndGetLastTaskId() {
+        return ++lastTaskId;
+    }
 
     public synchronized int incAndGetLastGroupId() {
         return ++lastGroupId;
@@ -123,4 +137,10 @@ public class Project {
     public synchronized int incAndGetLastRoleId() {
         return ++lastRoleId;
     }
+
+    public synchronized int incAndGetLastStateId() { return ++lastStateId; }
+
+    public synchronized int incAndGetLastPriorityId() { return ++lastPriorityId; }
+
+    public synchronized int incAndGetLastIssueTypeId() { return ++lastIssueTypeId; }
 }

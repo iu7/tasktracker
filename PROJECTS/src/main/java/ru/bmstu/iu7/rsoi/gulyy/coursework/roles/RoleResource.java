@@ -68,8 +68,8 @@ public class RoleResource {
         em.persist(project);
         em.persist(role);
 
-        URI groupUri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(role.getId())).build();
-        return Response.created(groupUri).build();
+        URI roleUri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(role.getId())).build();
+        return Response.created(roleUri).build();
     }
 
     @DELETE

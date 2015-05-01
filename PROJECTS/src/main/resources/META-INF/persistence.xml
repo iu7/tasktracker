@@ -10,6 +10,9 @@
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.Group</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.users.GroupsUsers</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.roles.GroupRoles</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.roles.Role</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issuetypes.IssueType</class>
         <properties>
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.logging.level" value="INFO"/>
