@@ -12,7 +12,8 @@
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.users.GroupsUsers</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.roles.GroupRoles</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.roles.Role</class>
-        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issuetypes.IssueType</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.types.IssueType</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.states.IssueState</class>
         <properties>
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.logging.level" value="INFO"/>

@@ -1,4 +1,4 @@
-package ru.bmstu.iu7.rsoi.gulyy.coursework.issuetypes;
+package ru.bmstu.iu7.rsoi.gulyy.coursework.issue.types;
 
 import ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project;
 
@@ -31,7 +31,7 @@ public class IssueTypeResource {
     private UriInfo uriInfo;
 
     @GET
-    @Path("{projectName}/issuetype/{id}")
+    @Path("{projectName}/issuetypes/{id}")
     public IssueType getIssueType(@PathParam("id") int id, @PathParam("projectName") String projectName) {
         IssueTypePK pk = new IssueTypePK(id, projectName);
         IssueType issueType = em.find(IssueType.class, pk);
@@ -39,7 +39,7 @@ public class IssueTypeResource {
     }
 
     @GET
-    @Path("{projectName}/issuetype")
+    @Path("{projectName}/issuetypes")
     public List<IssueType> getAllIssueTypesForProject(@PathParam("projectName") String projectName) {
 
         Query query = em.createNamedQuery(IssueType.FIND_ALL_FOR_PROJECT);
@@ -51,7 +51,7 @@ public class IssueTypeResource {
     }
 
     @POST
-    @Path("{projectName}/issuetype")
+    @Path("{projectName}/issuetypes")
     public Response createNewIssueType(@PathParam("projectName") String projectName, JAXBElement<IssueType> issueTypeJAXB) {
 
         Project project = em.find(Project.class, projectName);
@@ -73,7 +73,7 @@ public class IssueTypeResource {
     }
 
     @DELETE
-    @Path("{projectName}/issuetype/{id}")
+    @Path("{projectName}/issuetypes/{id}")
     public void deleteIssueType(@PathParam("id") int id, @PathParam("projectName") String projectName) {
         IssueTypePK pk = new IssueTypePK(id, projectName);
         IssueType issueType = em.find(IssueType.class, pk);

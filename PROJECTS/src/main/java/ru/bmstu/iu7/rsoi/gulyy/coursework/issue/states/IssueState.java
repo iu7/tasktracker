@@ -1,4 +1,4 @@
-package ru.bmstu.iu7.rsoi.gulyy.coursework.issuetypes;
+package ru.bmstu.iu7.rsoi.gulyy.coursework.issue.states;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,12 +8,12 @@ import java.io.Serializable;
  */
 
 @Entity
-@IdClass(IssueTypePK.class)
-@NamedQuery(name = IssueType.FIND_ALL_FOR_PROJECT, query = "SELECT it FROM IssueType it WHERE it.projectName = ?1")
-@Table(name = "PROJECT_ISSUE_TYPES")
-public class IssueType {
+@IdClass(IssueStatePK.class)
+@NamedQuery(name = IssueState.FIND_ALL_FOR_PROJECT, query = "SELECT ist FROM IssueState ist WHERE ist.projectName = ?1")
+@Table(name = "PROJECT_ISSUE_STATES")
+public class IssueState {
 
-    public static final String FIND_ALL_FOR_PROJECT = "IssueType.findAll";
+    public static final String FIND_ALL_FOR_PROJECT = "IssueState.findAll";
 
     @Id
     private int id;
@@ -60,14 +60,12 @@ public class IssueType {
     }
 }
 
-class IssueTypePK implements Serializable {
+class IssueStatePK implements Serializable {
     private int id;
     private String projectName;
 
-    public IssueTypePK(int id, String projectName) {
+    public IssueStatePK(int id, String projectName) {
         this.id = id;
         this.projectName = projectName;
     }
 }
-
-
