@@ -40,7 +40,7 @@ public class IssueStateResource {
 
     @GET
     @Path("{projectName}/issuestates")
-    public List<IssueState> getAllIssueStateForProject(@PathParam("projectName") String projectName) {
+    public List<IssueState> getAllIssueStatesForProject(@PathParam("projectName") String projectName) {
 
         Query query = em.createNamedQuery(IssueState.FIND_ALL_FOR_PROJECT);
 
@@ -52,7 +52,7 @@ public class IssueStateResource {
 
     @POST
     @Path("{projectName}/issuestates")
-    public Response createNewIssueType(@PathParam("projectName") String projectName, JAXBElement<IssueState> issueStateJAXB) {
+    public Response createNewIssueState(@PathParam("projectName") String projectName, JAXBElement<IssueState> issueStateJAXB) {
 
         Project project = em.find(Project.class, projectName);
 
@@ -74,7 +74,7 @@ public class IssueStateResource {
 
     @DELETE
     @Path("{projectName}/issuestates/{id}")
-    public void deleteIssueType(@PathParam("id") int id, @PathParam("projectName") String projectName) {
+    public void deleteIssueState(@PathParam("id") int id, @PathParam("projectName") String projectName) {
         IssueStatePK pk = new IssueStatePK(id, projectName);
         IssueState issueState = em.find(IssueState.class, pk);
         em.remove(issueState);
