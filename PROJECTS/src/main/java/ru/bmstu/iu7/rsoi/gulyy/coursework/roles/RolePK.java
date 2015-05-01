@@ -1,4 +1,4 @@
-package ru.bmstu.iu7.rsoi.gulyy.coursework.role;
+package ru.bmstu.iu7.rsoi.gulyy.coursework.roles;
 
 import java.io.Serializable;
 

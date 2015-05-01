@@ -1,6 +1,4 @@
-package ru.bmstu.iu7.rsoi.gulyy.coursework.role;
-
-import ru.bmstu.iu7.rsoi.gulyy.coursework.groups.GroupPK;
+package ru.bmstu.iu7.rsoi.gulyy.coursework.roles;
 
 import javax.persistence.*;
 import java.math.BigInteger;

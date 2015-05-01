@@ -1,7 +1,5 @@
-package ru.bmstu.iu7.rsoi.gulyy.coursework.role;
+package ru.bmstu.iu7.rsoi.gulyy.coursework.roles;
 
-import ru.bmstu.iu7.rsoi.gulyy.coursework.groups.Group;
-import ru.bmstu.iu7.rsoi.gulyy.coursework.groups.GroupPK;
 import ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project;
 
 import javax.ejb.Stateless;
@@ -97,10 +95,10 @@ public class RoleResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        // get json data (new role name)
+        // get json data (new roles name)
         Role newRole = roleJaxb.getValue();
 
-        // set new role name
+        // set new roles name
         role.setName(newRole.getName());
 
         // merge and return response
