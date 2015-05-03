@@ -65,6 +65,8 @@ public class RoleResource {
         role.setId(project.incAndGetLastRoleId());
         role.setProjectName(project.getName());
 
+        role.setDefaultPermissions();
+
         em.persist(project);
         em.persist(role);
 
@@ -136,5 +138,50 @@ public class RoleResource {
         URI userUri = uriInfo.getBaseUriBuilder().path("projects").path(projectName)
                 .path("roles").path(String.valueOf(role.getId())).build();
         return Response.ok(userUri).build();
+    }
+
+    @PUT
+    @Path("{projectName}/roles/{id}/permissions")
+    public Response setRolePermission(@PathParam("projectName") String projectName, @PathParam("id") int id,
+                                      JAXBElement<Permission> permissionJaxb) {
+
+        RolePK pk = new RolePK(id, projectName);
+
+        // find role by id and project name
+        Role role = em.find(Role.class, pk);
+
+        // check exist role
+        if (role == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        // get json data (permission name and value)
+        Permission permission = permissionJaxb.getValue();
+
+        if (permission.getValue() == null || !role.getPermissions().containsKey(permission.getName())) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        // set new permission (value) by name (key)
+        role.getPermissions().put(permission.getName(), permission.getValue());
+
+        // merge and return response
+        em.merge(role);
+
+        URI permissionUri = uriInfo.getBaseUriBuilder().path("projects").path(projectName).path("roles")
+                .path(String.valueOf(role.getId())).path("permissions").path(permission.getName()).build();
+        return Response.ok(permissionUri).build();
+    }
+
+    @GET
+    @Path("{projectName}/roles/{id}/permissions/{name}")
+    public Permission getPermission(@PathParam("projectName") String projectName, @PathParam("id") int id
+                                    ,@PathParam("name") String permissionName) {
+        RolePK pk = new RolePK(id, projectName);
+        Role role = em.find(Role.class, pk);
+
+        Permission permission = new Permission(permissionName, role.getPermissions().get(permissionName));
+
+        return permission;
     }
 }

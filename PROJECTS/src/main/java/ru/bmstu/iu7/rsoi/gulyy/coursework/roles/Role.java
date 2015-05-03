@@ -1,7 +1,8 @@
 package ru.bmstu.iu7.rsoi.gulyy.coursework.roles;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Konstantin Gulyy
@@ -27,8 +28,12 @@ public class Role {
     @Column(length = 512)
     private String description;
 
-    @Transient
-    private BigInteger scope;
+//    @Transient
+    @ElementCollection
+    @CollectionTable(name="permissions")
+    @MapKeyColumn (name = "name")
+    @Column(name = "value")
+    private Map<String, Boolean> permissions = new HashMap();
 
     public int getId() {
         return id;
@@ -60,5 +65,19 @@ public class Role {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Map<String, Boolean> getPermissions() {
+        return permissions;
+    }
+
+    public void setDefaultPermissions() {
+
+        boolean value = false;
+
+        permissions.put("Create Issue", value);
+        permissions.put("Delete Issue", value);
+        permissions.put("Read Issue", value);
+        permissions.put("Update Issue", value);
     }
 }
