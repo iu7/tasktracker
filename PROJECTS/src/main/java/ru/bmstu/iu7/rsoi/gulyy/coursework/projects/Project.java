@@ -43,9 +43,6 @@ public class Project {
     @Column(name = "last_issue_type_id")
     private int lastIssueTypeId;
 
-    public Project() {
-    }
-
     public String getName() {
         return name;
     }

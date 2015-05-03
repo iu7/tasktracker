@@ -1,6 +1,5 @@
 package ru.bmstu.iu7.rsoi.gulyy.coursework.issue.priorities;
 
-
 import ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project;
 
 import javax.ejb.Stateless;

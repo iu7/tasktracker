@@ -31,13 +31,13 @@ public class ProjectResource {
 
     @GET
     @Path("{projectName}")
-    public Project getUserByLogin(@PathParam("projectName") String projectName) {
+    public Project getProjectByLogin(@PathParam("projectName") String projectName) {
         Project project = em.find(Project.class, projectName);
         return project;
     }
 
     @GET
-    public List<Project> getUsers(@QueryParam("names") @DefaultValue("") String names) {
+    public List<Project> getProjects(@QueryParam("names") @DefaultValue("") String names) {
 
         names = (names.equals(",")) ? "" : names;
 
@@ -118,5 +118,19 @@ public class ProjectResource {
 
         URI userUri = uriInfo.getBaseUriBuilder().path("projects").path(project.getName()).build();
         return Response.ok(userUri).build();
+    }
+
+    @POST
+    @Path("{projectName}/incAndGetLastTaskId")
+    public Response incAndGetLastTaskId(@PathParam("projectName") String projectName) {
+        // find project by projectName
+        Project project = em.find(Project.class, projectName);
+
+        // check exist project
+        if (project == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok("{\"LastTaskId\" : "+ project.incAndGetLastTaskId() +"}").build();
     }
 }

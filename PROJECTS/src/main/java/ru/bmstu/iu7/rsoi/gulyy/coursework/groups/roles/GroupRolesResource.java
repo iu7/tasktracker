@@ -36,7 +36,7 @@ public class GroupRolesResource {
 
     @POST
     @Path("/{projectName}/groups/{groupId}/roles")
-    public Response addUserToGroup(@PathParam("projectName") String projectName,
+    public Response addRolesToGroup(@PathParam("projectName") String projectName,
                                    @PathParam("groupId") int groupId,
                                    JAXBElement<GroupRoles> groupRolesJAXBElement) {
 
@@ -70,7 +70,7 @@ public class GroupRolesResource {
 
     @DELETE
     @Path("/{projectName}/groups/{id}/roles/{roleId}")
-    public void deleteUserFromGroup(@PathParam("projectName") String projectName,
+    public void deleteRolesFromGroup(@PathParam("projectName") String projectName,
                                     @PathParam("id") int groupId,
                                     @PathParam("roleId") int roleId) {
 
@@ -81,7 +81,7 @@ public class GroupRolesResource {
 
     @GET
     @Path("/{projectName}/groups/{id}/roles")
-    public List<GroupRoles> getAllGroupsUsers(@PathParam("projectName") String projectName,
+    public List<GroupRoles> getAllGroupRoles(@PathParam("projectName") String projectName,
                                                @PathParam("id") int groupId) {
 
         Query query = em.createNamedQuery(GroupRoles.FIND_ALL_GROUP_ROLES);

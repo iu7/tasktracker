@@ -1,7 +1,6 @@
 package ru.bmstu.iu7.rsoi.gulyy.coursework.groups;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * @author Konstantin Gulyy
@@ -26,9 +25,6 @@ public class Group {
 
     @Column(length = 512)
     private String description;
-
-    public Group() {
-    }
 
     public int getId() {
         return id;

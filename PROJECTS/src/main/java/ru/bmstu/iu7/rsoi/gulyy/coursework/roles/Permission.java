@@ -1,8 +1,5 @@
 package ru.bmstu.iu7.rsoi.gulyy.coursework.roles;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
 /**
  * Created by Константин on 03.05.2015.
  */
