@@ -29,11 +29,13 @@ BEGIN {
 	my $path2config = "$ENV{ETC_DIRECTORY}/session.conf";
 
 	read_config($path2config, my %config);
+	db_proxy_initialize($config{DATABASE});
+
 	$__memcached = Cache::Memcached->new({
 		servers => [ $config{MEMCACHED}{'server-addr'} ],
 	});
-
 	$__memcached->add(SESSION_ID_KEY(), 0);
+
 	$SESSION_EXPIRATION_TIME = $config{SESSION}{'expiration-period'};
 }
 
