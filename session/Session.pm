@@ -34,7 +34,7 @@ BEGIN {
 	});
 
 	$__memcached->add(SESSION_ID_KEY(), 0);
-	$SESSION_EXPIRATION_TIME = $config{SESSION}{'expiration-perion'};
+	$SESSION_EXPIRATION_TIME = $config{SESSION}{'expiration-period'};
 }
 
 sub __session_generate_token
