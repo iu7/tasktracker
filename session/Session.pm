@@ -8,7 +8,7 @@ use Config::Std;
 use Cache::Memcached;
 use Digest::MD5 qw(md5_hex);
 
-use lib qw(..);
+use lib qw(../Wrappers);
 use DB::DBProxy qw(:all);
 
 use base qw(Exporter);
