@@ -11,6 +11,9 @@ use Digest::MD5 qw(md5_hex);
 use lib qw(../Wrappers);
 use DB::DBProxy qw(:all);
 
+use lib qw(..);
+use Wrappers::Response qw(response_wrapper_initialize);
+
 use base qw(Exporter);
 our @EXPORT_OK = qw(
 	session_check
@@ -30,7 +33,11 @@ BEGIN {
 
 	read_config($path2config, my %config);
 	db_proxy_initialize($config{DATABASE});
-
+	response_wrapper_initialize(
+		service => 'session',
+		host    => $config{MONITORING}{host},
+		port    => $config{MONITORING}{port},
+	);
 	$__memcached = Cache::Memcached->new({
 		servers => [ $config{MEMCACHED}{'server-addr'} ],
 	});
