@@ -79,5 +79,34 @@ public class Role {
         permissions.put("Delete Issue", value);
         permissions.put("Read Issue", value);
         permissions.put("Update Issue", value);
+        permissions.put("Update Watchers", value);
+        permissions.put("View Watchers", value);
+        permissions.put("Add Attachment", value);
+        permissions.put("Delete Attachment", value);
+        permissions.put("Update Attachment", value);
+        permissions.put("Create Comment", value);
+        permissions.put("Delete Own Comment", value);
+        permissions.put("Delete Not Own and Permanent Comment Delete", value);
+        permissions.put("Read Comment", value);
+        permissions.put("Update Own Comment", value);
+        permissions.put("Update Not Own Comment", value);
+        permissions.put("Delete User", value);
+        permissions.put("Read Not Own Profile", value);
+        permissions.put("Update Not Own Profile ", value);
+        permissions.put("Create Project ", value);
+        permissions.put("Delete Project", value);
+        permissions.put("Read Project", value);
+        permissions.put("Update Project", value);
+        permissions.put("Add Role in Project", value);
+        permissions.put("Remove Role in Project", value);
+        permissions.put("Create Role", value);
+        permissions.put("Read User", value);
+        permissions.put("Read Self", value);
+        permissions.put("Update User", value);
+        permissions.put("Update Self", value);
+        permissions.put("Create User Group", value);
+        permissions.put("Delete User Group", value);
+        permissions.put("Read User Group", value);
+        permissions.put("Update User Group", value);
     }
 }
