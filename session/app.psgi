@@ -25,7 +25,7 @@ my $login = sub {
 	my $req = Plack::Request->new(shift);
 
 	return send_response(405 , [], [])
-		if $req->method() ne 'PUT';
+		if $req->method() ne 'POST';
 
 	my ($status, $body) = session_login(read_req_body($req));
 
