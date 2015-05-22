@@ -3,11 +3,46 @@ package Sopheriel;
 use strict;
 use warnings;
 
-# TODO:
-#пуши приходят так: "общая часть пути"/<project_id> -- пусть это будет в логике
-#(nginx это туда проксирует) собирается нужная инфа и добавляется в очередь.
-#дальше демонок тянет из очереди по одному эвенту и обрабатывает их (как???)
+use JSON;
+use Net::RabbitFoot;
 
-#итого: логика пишет просто в очередь.
-#демонок читает очередь, думает и ебашит в базу напрямую.
-#нужнно научить делать ее это все асинхронно (логику)
+my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
+	host	=> 'localhost',
+	port	=> 5672,
+
+	user	=> 'guest',
+	pass	=> 'guest',
+
+	vhost	=> '/',
+);
+
+my $ch = $conn->open_channel();
+$ch->declare_queue(
+	queue	=> 'push_events_queue',
+	durable	=> 1,
+);
+
+sub callback {
+	my $var = shift;
+
+	my $body = $var->{body}->{payload} || {};
+	if (my $payload = eval { from_json($body) }) {
+		use Data::Dumper;
+		print Dumper $payload;
+
+		# TODO: process it and send to backend
+	} else {
+		print {*STDERR} "can't decode json: $@\n";
+	}
+
+	$ch->ack();
+}
+
+$ch->qos(prefetch_count => 1);
+
+$ch->consume(
+	on_consume	=> \&callback,
+	no_ack		=> 0,
+);
+
+AnyEvent->condvar->recv();
