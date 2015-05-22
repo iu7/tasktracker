@@ -63,8 +63,8 @@ my $not_found = sub {
 
 my $main_app = builder {
 	enable 'Plack::Middleware::AccessLog';
-	mount '/login'  => builder { $login     };
-	mount '/check'  => builder { $check     };
-	mount '/logout' => builder { $logout    };
-	mount '/'       => builder { $not_found };
+	mount '/session/login'  => builder { $login     };
+	mount '/session/check'  => builder { $check     };
+	mount '/session/logout' => builder { $logout    };
+	mount '/'               => builder { $not_found };
 };
