@@ -31,11 +31,19 @@ my $receiver = Github::Hooks::Receiver->new();
 $receiver->on(push => sub {
 	my ($event, $req) = @_;
 
+	my $payload_ref = $event->payload();
+	my $project_id = substr $req->path(), 1;
+	my $info_ref = {
+		project_id	=> $project_id,
+		commit_url	=> $payload_ref->{head_commit}{url},
+		commit_message	=> $payload_ref->{head_commit}{message},
+	};
+
 	print "Received new push event, append to queue\n";
 	$__chain->publish(
 		exchange	=> '',
 		routing_key	=> 'push_events_queue',
-		body		=> to_json($event->payload()),
+		body		=> to_json($info_ref),
 	);
 });
 
