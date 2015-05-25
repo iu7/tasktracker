@@ -132,7 +132,7 @@ sub users_check_request
 
 	return {
 		status	=> HTTP_NOT_IMPLEMENTED,
-		error	=> 'not implemented yet';
+		error	=> 'not implemented yet',
 	};
 }
 
