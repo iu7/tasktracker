@@ -5,6 +5,7 @@ use warnings;
 
 use JSON;
 use Config::Std;
+use HTTP::Status qw(:constants);
 
 use lib qw(../Wrappers);
 use DB::DBProxy qw(:all);
@@ -63,6 +64,88 @@ sub __base_path_for_users
 sub __base_path_for_tasks
 {
 	return __base_path_for('tasks');
+}
+
+
+# /projects
+# /projects/{projectName}/exist
+# /projects/{projectName}/updateManager
+# /projects/{projectName}/updateDescription
+# /projects
+#
+# /projects/{projectName}/groups
+# /projects/{projectName}/groups/{id}
+# /projects/{projectName}/groups
+# /projects/{projectName}/groups/{id}
+# /projects/{projectName}/groups/{id}/updateName
+# /projects/{projectName}/groups/{id}/updateDescription
+# /projects/{projectName}/groups/{id}/users
+# /projects/{projectName}/groups/{id}/users/{userId}
+# /projects/{projectName}/groups/{id}/users
+# /projects/{projectName}/roles
+# /projects/{projectName}/roles/{id}
+# /projects/{projectName}/roles/{id}/updateName
+# /projects/{projectName}/roles/{id}/updateDescription
+# /projects/{projectName}/roles/{id}
+# /projects/{projectName}/roles
+#
+# /projects/{projectName}/roles/{id}/permissions
+# /projects/{projectName}/roles/{id}/permissions/{name}
+# /projects/{projectName}/groups/{id}/roles
+# /projects/{projectName}/groups/{id}/roles/{roleId}
+# /projects/{projectName}/groups/{id}/roles
+# /projects/{projectName}/issuetypes
+# /projects/{projectName}/issuetypes
+# /projects/{projectName}/issuetypes/{id}
+# /projects/{projectName}/issuetypes/{id}
+# /projects/{projectName}/issuestates
+# /projects/{projectName}/issuestates
+# /projects/{projectName}/issuestates/{id}
+# /projects/{projectName}/issuestates/{id}
+# /projects/{projectName}/issuepriorities
+# /projects/{projectName}/issuepriorities
+# /projects/{projectName}/issuepriorities/{id}
+# /projects/{projectName}/issuepriorities/{id}
+# /projects/{projectName}/incAndGetLastTaskId
+
+
+
+
+
+
+# POST /users
+# GET  /users ? logins=const.gulyy,mylogin,eroshka
+
+# GET  /users/{login}
+
+# PUT  /users/{login}/updateName
+# PUT  /users/{login}/updateEmail
+# POST /users/{login}/resetPassword
+
+# TODO: set `error' if there is one
+sub users_check_request
+{
+	my $req = shift;
+
+#	return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
+#		if $req->method() eq 'DELETE';
+
+	return {
+		status	=> HTTP_NOT_IMPLEMENTED,
+		error	=> 'not implemented yet';
+	};
+}
+
+sub users_access_denied
+{
+	my $req_info = shift;
+	die 'not implemented';
+}
+
+sub users_process_request
+{
+	my $req_info = shift;
+	die 'not implemented';
 }
 
 sub session_check

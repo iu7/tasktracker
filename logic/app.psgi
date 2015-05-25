@@ -6,13 +6,12 @@ use Plack::Builder;
 use Plack::Request;
 use Plack::Response;
 use LWP::UserAgent;
+use HTTP::Status qw(:constants);
 
 use Logic qw(:all);
 
 use lib qw(..);
 use Wrappers::Response qw(send_response);
-
-use feature qw(switch);
 
 sub read_req_body
 {
@@ -34,68 +33,32 @@ sub get_session_info
 	};
 }
 
-# /projects
-# /projects/{projectName}/exist
-# /projects/{projectName}/updateManager
-# /projects/{projectName}/updateDescription
-# /projects
-#
-# /projects/{projectName}/groups
-# /projects/{projectName}/groups/{id}
-# /projects/{projectName}/groups
-# /projects/{projectName}/groups/{id}
-# /projects/{projectName}/groups/{id}/updateName
-# /projects/{projectName}/groups/{id}/updateDescription
-# /projects/{projectName}/groups/{id}/users
-# /projects/{projectName}/groups/{id}/users/{userId}
-# /projects/{projectName}/groups/{id}/users
-# /projects/{projectName}/roles
-# /projects/{projectName}/roles/{id}
-# /projects/{projectName}/roles/{id}/updateName
-# /projects/{projectName}/roles/{id}/updateDescription
-# /projects/{projectName}/roles/{id}
-# /projects/{projectName}/roles
-#
-# /projects/{projectName}/roles/{id}/permissions
-# /projects/{projectName}/roles/{id}/permissions/{name}
-# /projects/{projectName}/groups/{id}/roles
-# /projects/{projectName}/groups/{id}/roles/{roleId}
-# /projects/{projectName}/groups/{id}/roles
-# /projects/{projectName}/issuetypes
-# /projects/{projectName}/issuetypes
-# /projects/{projectName}/issuetypes/{id}
-# /projects/{projectName}/issuetypes/{id}
-# /projects/{projectName}/issuestates
-# /projects/{projectName}/issuestates
-# /projects/{projectName}/issuestates/{id}
-# /projects/{projectName}/issuestates/{id}
-# /projects/{projectName}/issuepriorities
-# /projects/{projectName}/issuepriorities
-# /projects/{projectName}/issuepriorities/{id}
-# /projects/{projectName}/issuepriorities/{id}
-# /projects/{projectName}/incAndGetLastTaskId
 my $projects = sub {
-	my $env = shift;
-
-	return send_response(500, [], [ 'not implemented yet' ]);
+	return send_response(HTTP_NOT_IMPLEMENTED, [], []);
 };
 
 my $tasks = sub {
-	my $env = shift;
-
-	return send_response(500, [], [ 'not implemented yet' ]);
+	return send_response(HTTP_NOT_IMPLEMENTED, [], []);
 };
 
-# /users
-# /users/{login}/updateName
-# /users/{login}/updateEmail
-# /users/{login}/resetPassword
-# /users/{login}
-# /users
 my $users = sub {
-	my $env = shift;
+	my $req = Plack::Request->new(shift);
 
-	return send_response(500, [], [ 'not implemented yet' ]);
+	my $params;
+	if ($req->method() eq 'POST' or $req->method() eq 'PUT') {
+		$params = read_body_req($req);
+	} else {
+		$params = $req->query_parameters();
+	}
+
+	my $req_info = users_check_request($req, $params);
+	return send_response($req_info->{status}, [], [ $req_info->{error} ])
+		if $req_info->{error};
+
+	return send_response($req_info->{status}, [], [])
+		if $req_info->{need_check_access} and users_access_denied($req_info);
+
+	return send_response(users_process_request($req_info));
 };
 
 my $session = sub {
@@ -103,24 +66,24 @@ my $session = sub {
 
 	my $path = $req->path();
 	if ($path =~ m{^ /login  $}msx) {
-		return send_response(405 , [], [])
+		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'POST';
 
 		return send_response(session_login(read_req_body($req), get_session_info($req)));
 	}
 
 	if ($path =~ m{^ /logout $}msx) {
-		return send_response(405 , [], [])
+		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'PUT';
 
 		return send_response(session_logout(read_req_body($req), get_session_info($req)));
 	}
 
-	return send_response(404, [], ['session: unknown request: ' . $path]);
+	return send_response(HTTP_NOT_FOUND, [], ['session: unknown request: ' . $path]);
 };
 
 my $not_found = sub {
-	return send_response(404, [], []);
+	return send_response(HTTP_NOT_FOUND, [], []);
 };
 
 my $app = builder {
