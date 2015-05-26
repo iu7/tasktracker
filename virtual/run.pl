@@ -4,7 +4,7 @@ use warnings;
 use autodie qw(:all);
 use Getopt::Long;
 
-my ($share_path, $share_tag, $vde_switch, $mac, $from_to_pair, $memory);
+my ($share_path, $share_tag, $vde_switch, $mac1, $mac2, $from_to_pair, $memory);
 
 $memory = 256;
 GetOptions(
@@ -13,7 +13,8 @@ GetOptions(
 	'path=s'	=> \$share_path,
 
 	'switch=s'	=> \$vde_switch,
-	'mac=s'		=> \$mac,
+	'mac1=s'	=> \$mac1,
+	'mac2=s'	=> \$mac2,
 
 	'from_to=s'	=> \$from_to_pair,
 ) or die usage();
@@ -28,13 +29,14 @@ if ($share_path) {
 
 my @network_options;
 if ($vde_switch) {
-	die usage() unless $mac;
-	push @network_options, "-net nic,vlan=0,macaddr=$mac";
+	die usage() unless $mac1;
+	push @network_options, "-net nic,vlan=0,macaddr=$mac1";
 	push @network_options, "-net vde,sock=$vde_switch,vlan=0";
 }
+
+push @network_options, "-net nic,vlan=1,macaddr=$mac2 -net user,vlan=1,net=10.0.0.0/8,host=10.0.0.1"; # good
 if ($from_to_pair) {
-	push @network_options, "-net user,net=10.0.0.0/8,host=10.0.0.1,hostfwd=tcp:$from_to_pair";
-#	push @network_options, "-net user,vlan=1,hostfwd=tcp:$from_to_pair";
+	push @network_options, "-net user,vlan=1,net=10.0.0.0/8,host=10.0.0.1,hostfwd=tcp:$from_to_pair";
 }
 
 my @common_options = qw(-enable-kvm -daemonize);
