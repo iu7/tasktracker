@@ -11,23 +11,13 @@ use Session qw(:all);
 use lib qw(..);
 use Wrappers::Response qw(send_response);
 
-sub read_req_body
-{
-	my ($req, $buf, $len) = shift;
-
-	$len = $req->headers()->header('Content-Length');
-	$req->body()->read($buf, $len);
-
-	return $buf;
-}
-
 my $login = sub {
 	my $req = Plack::Request->new(shift);
 
 	return send_response(405 , [], [])
 		if $req->method() ne 'POST';
 
-	my ($status, $body) = session_login(read_req_body($req));
+	my ($status, $body) = session_login($req->content());
 
 	return send_response($status, [ 'Content-Length' => length $body ], [ $body ]);
 };
@@ -52,7 +42,7 @@ my $logout = sub {
 	return send_response(405 , [], [])
 		if $req->method() ne 'PUT';
 
-	my ($status, $body) = session_logout(read_req_body($req));
+	my ($status, $body) = session_logout($req->content());
 
 	return send_response($status, [], [ $body ]);
 };
