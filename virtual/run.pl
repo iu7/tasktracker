@@ -4,9 +4,10 @@ use warnings;
 use autodie qw(:all);
 use Getopt::Long;
 
-my ($share_path, $share_tag, $vde_switch, $mac1, $mac2, $from_to_pair, $memory);
+my ($share_path, $share_tag, $vde_switch, $mac1, $mac2, $fwd, $memory);
 
 $memory = 256;
+$fwd = q{};
 GetOptions(
 	'mem=s'		=> \$memory,
 	'tag=s'		=> \$share_tag,
@@ -16,7 +17,7 @@ GetOptions(
 	'mac1=s'	=> \$mac1,
 	'mac2=s'	=> \$mac2,
 
-	'from_to=s'	=> \$from_to_pair,
+	'fwd=s'		=> \$fwd,
 ) or die usage();
 my $image = shift or die usage();
 
@@ -33,11 +34,7 @@ if ($vde_switch) {
 	push @network_options, "-net nic,vlan=0,macaddr=$mac1";
 	push @network_options, "-net vde,sock=$vde_switch,vlan=0";
 }
-
-push @network_options, "-net nic,vlan=1,macaddr=$mac2 -net user,vlan=1,net=10.0.0.0/8,host=10.0.0.1"; # good
-if ($from_to_pair) {
-	push @network_options, "-net user,vlan=1,net=10.0.0.0/8,host=10.0.0.1,hostfwd=tcp:$from_to_pair";
-}
+push @network_options, "-net nic,vlan=1,macaddr=$mac2 -net user,vlan=1,net=10.0.0.0/8,host=10.0.0.1,$fwd";
 
 my @common_options = qw(-enable-kvm -daemonize);
 push @common_options, "-m $memory";
@@ -51,7 +48,7 @@ sub usage
 	       "    --tag             specify `tag name' to mount inside guest os\n\n" .
 
 	       "    --switch          specify path to `vde' socket\n" .
-	       "    --mac             specify mac address for vm\n\n" .
+	       "    --mac{1,2}        specify mac address for vm\n\n" .
 
-	       "    --from_to       specify host address to redirect from ([ip]:port-[ip]:port)\n";
+	       "    --fwd             specify host address to redirect from (see hostfwd (qemu))\n";
 }
