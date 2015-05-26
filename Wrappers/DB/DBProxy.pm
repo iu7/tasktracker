@@ -75,8 +75,15 @@ sub db_proxy_initialize
 		port => $port,
 	};
 
+	my $ref = ref ($args_ref->{slave_addr}) // q{};
+	if ($ref ne 'ARRAY') {
+		$args_ref->{slave_addr} = [ $args_ref->{slave_addr} ];
+	}
+
 	$__connect_options{slaves} = [];
 	foreach my $slave (@{ $args_ref->{slave_addr} }) {
+		next unless $slave;
+
 		my ($host, $port) = split /\s+/, $slave;
 		push @{ $__connect_options{slaves} }, {
 			host => $host,
