@@ -13,16 +13,6 @@ use Logic qw(:all);
 use lib qw(..);
 use Wrappers::Response qw(send_response);
 
-sub read_req_body
-{
-	my ($req, $buf, $len) = shift;
-
-	$len = $req->headers()->header('Content-Length');
-	$req->body()->read($buf, $len);
-
-	return $buf;
-}
-
 sub get_session_info
 {
 	my $req = shift;
@@ -46,7 +36,7 @@ my $users = sub {
 
 	my $params;
 	if ($req->method() eq 'POST' or $req->method() eq 'PUT') {
-		$params = read_body_req($req);
+		$params = $req->content();
 	} else {
 		$params = $req->query_parameters();
 	}
@@ -69,14 +59,14 @@ my $session = sub {
 		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'POST';
 
-		return send_response(session_login(read_req_body($req), get_session_info($req)));
+		return send_response(session_login($req->content(), get_session_info($req)));
 	}
 
 	if ($path =~ m{^ /logout $}msx) {
 		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'PUT';
 
-		return send_response(session_logout(read_req_body($req), get_session_info($req)));
+		return send_response(session_logout($req->content(), get_session_info($req)));
 	}
 
 	return send_response(HTTP_NOT_FOUND, [], ['session: unknown request: ' . $path]);
