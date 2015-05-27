@@ -25,19 +25,19 @@ sub get_session_info
 
 my %__ref_for = (
 	users => {
-		validate_cb		=> \&users_validate_request,
+		parse_cb		=> \&users_parse_request,
 		access_denied_cb	=> \&users_access_denied,
 		process_request_cb	=> \&users_process_request,
 	},
 
 	tasks => {
-		validate_cb		=> \&tasks_validate_request,
+		parse_cb		=> \&tasks_parse_request,
 		access_denied_cb	=> \&tasks_access_denied,
 		process_request_cb	=> \&tasks_process_request,
 	},
 
 	projects => {
-		validate_cb		=> \&projects_validate_request,
+		parse_cb		=> \&projects_parse_request,
 		access_denied_cb	=> \&projects_access_denied,
 		process_request_cb	=> \&projects_process_request,
 	},
@@ -57,7 +57,7 @@ sub __make_backend
 			$params = $req->query_parameters();
 		}
 
-		my $req_info = $__ref_for{$backend}{validate_cb}($req, $params);
+		my $req_info = $__ref_for{$backend}{parse_cb}($req, $params);
 		return send_response($req_info->{status}, [], [ $req_info->{error} ])
 			if $req_info->{error};
 

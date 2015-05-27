@@ -19,15 +19,15 @@ our @EXPORT_OK = qw(
 	session_login
 	session_logout
 
-	users_validate_request
+	users_parse_request
 	users_access_denied
 	users_process_request
 
-	tasks_validate_request
+	tasks_parse_request
 	tasks_access_denied
 	tasks_process_request
 
-	projects_validate_request
+	projects_parse_request
 	projects_access_denied
 	projects_process_request
 );
@@ -84,8 +84,6 @@ sub projects_validate_request
 
 	my $path = $req->path();
 	my $method = $req->method();
-
-	die 'not implemented yet';
 }
 
 sub projects_access_denied
@@ -125,51 +123,13 @@ sub tasks_process_request
 	die 'not implemented yet';
 }
 
-sub users_validate_request
+sub users_parse_request
 {
 	my ($req, $params) = @_;
 
 	my $path = $req->path();
 	my $method = $req->method();
-
-	if ($path eq '/') {
-		return {
-			path	=> $path,
-			method	=> 'GET',
-			params	=> $params,
-		} if $method eq 'GET';
-
-		return {
-			status	=> HTTP_BAD_REQUEST,
-			error	=> q{invalid method for `/'},
-		} if $method ne 'POST';
-
-		return {
-			path	=> $path,
-			method	=> 'POST',
-			params	=> $params,
-		} if $method eq 'POST';
-	}
-
 	my ($login, $request) = split qr{/}, substr($path, 1);
-	if (not $request) {
-		return {
-			status	=> HTTP_BAD_REQUEST,
-			error	=> q{invalid method for `/login'},
-		} if $method ne 'GET';
-
-		return {
-			path	=> $path,
-			login	=> $login,
-			method	=> 'GET',
-			params	=> $params,
-		};
-	}
-
-	return {
-		status	=> HTTP_BAD_REQUEST,
-		error	=> q{invalid method for `/login/action'},
-	} if $method ne 'PUT' and $method ne 'POST';
 
 	return {
 		path	=> $path,
