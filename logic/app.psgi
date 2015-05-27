@@ -41,12 +41,12 @@ my $users = sub {
 		$params = $req->query_parameters();
 	}
 
-	my $req_info = users_check_request($req, $params);
+	my $req_info = users_validate_request($req, $params);
 	return send_response($req_info->{status}, [], [ $req_info->{error} ])
 		if $req_info->{error};
 
 	return send_response($req_info->{status}, [], [])
-		if $req_info->{need_check_access} and users_access_denied($req_info);
+		if users_access_denied($req_info);
 
 	return send_response(users_process_request($req_info));
 };

@@ -18,6 +18,10 @@ our @EXPORT_OK = qw(
 	session_check
 	session_login
 	session_logout
+
+	users_validate_request
+	users_access_denied
+	users_process_request
 );
 our %EXPORT_TAGS = (
 	all => [ @EXPORT_OK ],
@@ -109,43 +113,98 @@ sub __base_path_for_tasks
 # /projects/{projectName}/incAndGetLastTaskId
 
 
-
-
-
-
-# POST /users
-# GET  /users ? logins=const.gulyy,mylogin,eroshka
-
-# GET  /users/{login}
-
-# PUT  /users/{login}/updateName
-# PUT  /users/{login}/updateEmail
-# POST /users/{login}/resetPassword
-
-# TODO: set `error' if there is one
-sub users_check_request
+sub users_validate_request
 {
-	my $req = shift;
+	my ($req, $params) = @_;
 
-#	return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
-#		if $req->method() eq 'DELETE';
+	my $path = $req->path();
+	my $method = $req->method();
+
+	if ($path eq '/') {
+		return {
+			path	=> $path,
+			method	=> 'GET',
+			params	=> $params,
+		} if $method eq 'GET';
+
+		return {
+			status	=> HTTP_BAD_REQUEST,
+			error	=> q{invalid method for `/'},
+		} if $method ne 'POST';
+
+		return {
+			path	=> $path,
+			method	=> 'POST',
+			params	=> $params,
+		} if $method eq 'POST';
+	}
+
+	my ($login, $request) = split qr{/}, substr($path, 1);
+	if (not $request) {
+		return {
+			status	=> HTTP_BAD_REQUEST,
+			error	=> q{invalid method for `/login'},
+		} if $method ne 'GET';
+
+		return {
+			path	=> $path,
+			login	=> $login,
+			method	=> 'GET',
+			params	=> $params,
+		};
+	}
 
 	return {
-		status	=> HTTP_NOT_IMPLEMENTED,
-		error	=> 'not implemented yet',
+		status	=> HTTP_BAD_REQUEST,
+		error	=> q{invalid method for `/login/action'},
+	} if $method ne 'PUT' and $method ne 'POST';
+
+	return {
+		path	=> $path,
+		login	=> $login,
+		action	=> $request,
+		method	=> $method,
+		params	=> $params,
 	};
 }
 
 sub users_access_denied
 {
 	my $req_info = shift;
-	die 'not implemented';
+
+	# FIXME
+
+	return 0;
 }
 
 sub users_process_request
 {
 	my $req_info = shift;
-	die 'not implemented';
+
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $base_url = __base_path_for_users();
+	my $tail = $req_info->{login} ? "$req_info->{path}" : q{};
+
+	my $resp;
+	if ($req_info->{method} eq 'GET') {
+		my @args_pairs;
+		foreach my $key (keys %{ $req_info->{params} }) {
+			push @args_pairs, "$key=$req_info->{params}{$key}";
+		}
+
+		$resp = $ua->get("${base_url}${tail}?" . join '&', @args_pairs);
+	} else {
+		my $request = HTTP::Request->new($req_info->{method});
+
+		$request->uri($base_url . $tail);
+		$request->content($req_info->{params});
+		$request->header('Content-Type' => 'application/json');
+
+		$resp = $ua->request($request);
+	}
+	my $content = $resp->content();
+
+	return ($resp->code(), [ 'Content-Length' => length $content ], [ $content ]);
 }
 
 sub session_check
@@ -175,9 +234,9 @@ sub session_login
 	my $base_url = __base_path_for_session();
 
 	my $resp = $ua->post("$base_url/login", Content => $data);
-	my $content_ref = [ $resp->decoded_content() ];
+	my $content = $resp->content();
 
-	return ($resp->code(), [], $content_ref);
+	return ($resp->code(), [ 'Content-Length' => length $content ], [ $content ]);
 }
 
 sub session_logout
@@ -188,7 +247,7 @@ sub session_logout
 	my $base_url = __base_path_for_session();
 
 	my $resp = $ua->put("$base_url/logout", Content => $data);
-	my $content_ref = [ $resp->decoded_content() ];
+	my $content = $resp->content();
 
-	return ($resp->code(), [], $content_ref);
+	return ($resp->code(), [ 'Content-Length' => length $content ], [ $content ]);
 }
