@@ -92,7 +92,12 @@ sub __session_login_and_password_are_ok
 	my ($login, $password) = @_;
 
 	my $query = 'SELECT 1 FROM users WHERE login=? and passwordhash=?';
-	return eval { db_proxy_select_row($query, $login, $password) };
+	my $ret = eval { db_proxy_select_row($query, $login, $password) };
+	unless (defined $ret) {
+		print STDERR "select failed: $@\n";
+	}
+
+	return $ret;
 }
 
 sub session_login
