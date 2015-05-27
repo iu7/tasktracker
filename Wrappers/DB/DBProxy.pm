@@ -33,20 +33,20 @@ sub __get_dbh
 
 	if (not $args{rw}) {
 		foreach my $ro (@{ $__connect_options{slaves} }) {
-			my $dbh = DBI->connect_cached(
+			my $dbh = eval { DBI->connect_cached(
 				"dbi:Pg:dbname=$dbname;host=$ro->{host};port=$ro->{port}",
 				$login, $pass, { AutoCommit => 1, RaiseError => 1 }
-			);
+			)};
 
 			return $dbh if $dbh;
 		}
 	}
 
 	my $rw = $__connect_options{master};
-	my $dbh = DBI->connect_cached(
+	my $dbh = eval { DBI->connect_cached(
 		"dbi:Pg:dbname=$dbname;host=$rw->{host};port=$rw->{port}",
 		$login, $pass, { AutoCommit => 1, RaiseError => 1 }
-	) or croak "can't connect to `$dbname' database: " . DBI::errstr();
+	)} or croak "can't connect to `$dbname' database: " . DBI::errstr();
 
 	return $dbh;
 }
