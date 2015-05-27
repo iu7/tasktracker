@@ -22,6 +22,14 @@ our @EXPORT_OK = qw(
 	users_validate_request
 	users_access_denied
 	users_process_request
+
+	tasks_validate_request
+	tasks_access_denied
+	tasks_process_request
+
+	projects_validate_request
+	projects_access_denied
+	projects_process_request
 );
 our %EXPORT_TAGS = (
 	all => [ @EXPORT_OK ],
@@ -70,48 +78,52 @@ sub __base_path_for_tasks
 	return __base_path_for('tasks');
 }
 
+sub projects_validate_request
+{
+	my ($req, $params) = @_;
 
-# /projects
-# /projects/{projectName}/exist
-# /projects/{projectName}/updateManager
-# /projects/{projectName}/updateDescription
-# /projects
-#
-# /projects/{projectName}/groups
-# /projects/{projectName}/groups/{id}
-# /projects/{projectName}/groups
-# /projects/{projectName}/groups/{id}
-# /projects/{projectName}/groups/{id}/updateName
-# /projects/{projectName}/groups/{id}/updateDescription
-# /projects/{projectName}/groups/{id}/users
-# /projects/{projectName}/groups/{id}/users/{userId}
-# /projects/{projectName}/groups/{id}/users
-# /projects/{projectName}/roles
-# /projects/{projectName}/roles/{id}
-# /projects/{projectName}/roles/{id}/updateName
-# /projects/{projectName}/roles/{id}/updateDescription
-# /projects/{projectName}/roles/{id}
-# /projects/{projectName}/roles
-#
-# /projects/{projectName}/roles/{id}/permissions
-# /projects/{projectName}/roles/{id}/permissions/{name}
-# /projects/{projectName}/groups/{id}/roles
-# /projects/{projectName}/groups/{id}/roles/{roleId}
-# /projects/{projectName}/groups/{id}/roles
-# /projects/{projectName}/issuetypes
-# /projects/{projectName}/issuetypes
-# /projects/{projectName}/issuetypes/{id}
-# /projects/{projectName}/issuetypes/{id}
-# /projects/{projectName}/issuestates
-# /projects/{projectName}/issuestates
-# /projects/{projectName}/issuestates/{id}
-# /projects/{projectName}/issuestates/{id}
-# /projects/{projectName}/issuepriorities
-# /projects/{projectName}/issuepriorities
-# /projects/{projectName}/issuepriorities/{id}
-# /projects/{projectName}/issuepriorities/{id}
-# /projects/{projectName}/incAndGetLastTaskId
+	my $path = $req->path();
+	my $method = $req->method();
 
+	die 'not implemented yet';
+}
+
+sub projects_access_denied
+{
+	my $req_info = shift;
+
+	# FIXME + authorized + has permissions
+
+	return 0;
+}
+
+sub projects_process_request
+{
+	my $req_info = shift;
+	die 'not implemented yet';
+}
+
+sub tasks_validate_request
+{
+	my ($req, $params) = @_;
+
+	die 'not implemented yet';
+}
+
+sub tasks_access_denied
+{
+	my $req_info = shift;
+
+	# FIXME
+
+	return 0;
+}
+
+sub tasks_process_request
+{
+	my $req_info = shift;
+	die 'not implemented yet';
+}
 
 sub users_validate_request
 {

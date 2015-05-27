@@ -23,33 +23,54 @@ sub get_session_info
 	};
 }
 
-my $projects = sub {
-	return send_response(HTTP_NOT_IMPLEMENTED, [], []);
-};
+my %__ref_for = (
+	users => {
+		validate_cb		=> \&users_validate_request,
+		access_denied_cb	=> \&users_access_denied,
+		process_request_cb	=> \&users_process_request,
+	},
 
-my $tasks = sub {
-	return send_response(HTTP_NOT_IMPLEMENTED, [], []);
-};
+	tasks => {
+		validate_cb		=> \&tasks_validate_request,
+		access_denied_cb	=> \&tasks_access_denied,
+		process_request_cb	=> \&tasks_process_request,
+	},
 
-my $users = sub {
-	my $req = Plack::Request->new(shift);
+	projects => {
+		validate_cb		=> \&projects_validate_request,
+		access_denied_cb	=> \&projects_access_denied,
+		process_request_cb	=> \&projects_process_request,
+	},
+);
 
-	my $params;
-	if ($req->method() eq 'POST' or $req->method() eq 'PUT') {
-		$params = $req->content();
-	} else {
-		$params = $req->query_parameters();
-	}
+sub __make_backend
+{
+	my $backend = shift;
 
-	my $req_info = users_validate_request($req, $params);
-	return send_response($req_info->{status}, [], [ $req_info->{error} ])
-		if $req_info->{error};
+	return sub {
+		my $req = Plack::Request->new(shift);
 
-	return send_response($req_info->{status}, [], [])
-		if users_access_denied($req_info);
+		my $params;
+		if ($req->method() eq 'POST' or $req->method() eq 'PUT') {
+			$params = $req->content();
+		} else {
+			$params = $req->query_parameters();
+		}
 
-	return send_response(users_process_request($req_info));
-};
+		my $req_info = $__ref_for{$backend}{validate_cb}($req, $params);
+		return send_response($req_info->{status}, [], [ $req_info->{error} ])
+			if $req_info->{error};
+
+		return send_response($req_info->{status}, [], [])
+			if $__ref_for{$backend}{access_denied_cb}($req_info);
+
+		return send_response($__ref_for{$backend}{process_request_cb}($req_info));
+	};
+}
+
+my $users = __make_backend('users');
+my $tasks = __make_backend('tasks');
+my $projects = __make_backend('projects');
 
 my $session = sub {
 	my $req = Plack::Request->new(shift);
