@@ -1,1 +1,1 @@
-ETC_DIRECTORY=etc prove tests/logic.t
+ETC_DIRECTORY=etc prove --verbose tests/logic.t

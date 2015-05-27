@@ -78,12 +78,33 @@ sub __base_path_for_tasks
 	return __base_path_for('tasks');
 }
 
-sub projects_validate_request
+sub projects_parse_request
 {
 	my ($req, $params) = @_;
 
 	my $path = $req->path();
 	my $method = $req->method();
+
+	my ($project_id, $tail) = split qr{/}, substr($path, 1), 2;
+	my $req_info = {
+		path		=> $path,
+		method		=> $method,
+		params		=> $params,
+		project_id	=> $project_id,
+	};
+	return $req_info unless $tail;
+
+	foreach my $end (qw(exist updateManager updateDescription)) {
+		next unless $tail eq $end;
+		$req_info->{action} = $end;
+
+		return $req_info;
+	}
+
+	(my $property, $tail) = split qr{/}, $tail, 2;
+	$req_info->{property} = $property;
+
+	return $req_info;
 }
 
 sub projects_access_denied
@@ -98,10 +119,34 @@ sub projects_access_denied
 sub projects_process_request
 {
 	my $req_info = shift;
-	die 'not implemented yet';
+
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $base_url = __base_path_for_projects();
+	my $tail = $req_info->{project_id} ? "$req_info->{path}" : q{};
+
+	my $resp;
+	if ($req_info->{method} eq 'GET' or $req_info->{method} eq 'DELETE') {
+		my @args_pairs;
+		foreach my $key (keys %{ $req_info->{params} }) {
+			push @args_pairs, "$key=$req_info->{params}{$key}";
+		}
+
+		$resp = $ua->get("${base_url}${tail}?" . join '&', @args_pairs);
+	} else {
+		my $request = HTTP::Request->new($req_info->{method});
+
+		$request->uri($base_url . $tail);
+		$request->content($req_info->{params});
+		$request->header('Content-Type' => 'application/json');
+
+		$resp = $ua->request($request);
+	}
+	my $content = $resp->content();
+
+	return ($resp->code(), [ 'Content-Length' => length $content ], [ $content ]);
 }
 
-sub tasks_validate_request
+sub tasks_parse_request
 {
 	my ($req, $params) = @_;
 
