@@ -125,6 +125,14 @@ if (1) {
 	$res = $test->request(PUT '/projects/test/updateDescription', Content => $content);
 	is $res->code(), HTTP_OK;
 
+# select projects
+	$res = $test->request(GET '/projects?names=test');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	is $content->[0]{description}, 'Another description';
+	is $content->[0]{managerId}, 'spectre2';
+	is $content->[0]{name}, 'test';
+
 # create new priority
 	$content = to_json({ name => 'Normal', description => 'Priority of issue' });
 	$res = $test->request(POST '/projects/test/issuepriorities', Content => $content);
@@ -251,22 +259,83 @@ if (1) {
 	is $res->code(), HTTP_NOT_FOUND;
 
 
-# TODO: other tests for group
 # create new group
 	$content = to_json({ name => 'test group', description => 'group for test' });
 	$res = $test->request(POST '/projects/test/groups', Content => $content);
 	is $res->code(), HTTP_CREATED;
 
-# delete groups
+# update group name
+	$content = to_json({ name => 'upd test group' });
+	$res = $test->request(PUT '/projects/test/groups/1/updateName', Content => $content);
+	is $res->code(), HTTP_OK;
+
+# update group description
+	$content = to_json({ description => 'upd group for test' });
+	$res = $test->request(PUT '/projects/test/groups/1/updateDescription', Content => $content);
+	is $res->code(), HTTP_OK;
+
+# select all groups
+	$res = $test->request(GET '/projects/test/groups/1');
+	is $res->code(), HTTP_OK;
+
+# select group by id
+	$res = $test->request(GET '/projects/test/groups/1');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	is $content->{description}, 'upd group for test';
+	is $content->{name}, 'upd test group';
+
+# TODO: create user here
+# add user to group
+	$content = to_json({ userId => 'spectre' });
+	$res = $test->request(POST '/projects/test/groups/1/users', Content => $content);
+	is $res->code(), HTTP_CREATED;
+
+# select group users
+	$res = $test->request(GET '/projects/test/groups/1/users');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	is $content->[0]{userId}, 'spectre';
+
+# delete user from group
+	$res = $test->request(DELETE '/projects/test/groups/1/users/spectre');
+	is $res->code(), HTTP_OK;
+
+# select group users
+	$res = $test->request(GET '/projects/test/groups/1/users');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	ok @{ $content } == 0; # empty result
+
+# TODO: create here role
+# add role to group
+	$content = to_json({ roleId => 1 });
+	$res = $test->request(POST '/projects/test/groups/1/roles', Content => $content);
+	is $res->code(), HTTP_CREATED;
+
+# select group roles
+	$res = $test->request(GET '/projects/test/groups/1/roles');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	is $content->[0]{roleId}, 1;
+
+# delete role from group
+	$res = $test->request(DELETE '/projects/test/groups/1/roles/1');
+	is $res->code(), HTTP_OK;
+
+# select group roles
+	$res = $test->request(GET '/projects/test/groups/1/roles');
+	is $res->code(), HTTP_OK;
+	$content = from_json($res->content());
+	ok @{ $content } == 0; # empty result
+
+# delete group
 	$res = $test->request(DELETE '/projects/test/groups/1');
 	is $res->code(), HTTP_OK;
 
 # select group by id (after delete)
 	$res = $test->request(GET '/projects/test/groups/1');
 	is $res->code(), HTTP_NOT_FOUND;
-
-
-	print STDERR $res->content(), "\n";
 }
 
 # tasks: FIXME
