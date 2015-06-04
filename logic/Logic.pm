@@ -42,7 +42,7 @@ BEGIN {
 
 	read_config($path2config, %__config);
 	response_wrapper_initialize(
-		service => 'session',
+		service => 'logic',
 		host    => $__config{MONITORING}{host},
 		port    => $__config{MONITORING}{port},
 	);
