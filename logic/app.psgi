@@ -62,7 +62,7 @@ sub __make_backend
 			if $req_info->{error};
 
 		return send_response($req_info->{status}, [], [])
-			if $__ref_for{$backend}{access_denied_cb}($req_info);
+			if $__ref_for{$backend}{access_denied_cb}($req_info, $req);
 
 		return send_response($__ref_for{$backend}{process_request_cb}($req_info));
 	};

@@ -48,6 +48,9 @@ BEGIN {
 	);
 }
 
+sub HEADER_SESSION_ID()		{ 'X-Session-Id' }
+sub HEADER_SESSION_TOKEN()	{ 'X-Session-Token' }
+
 sub __base_path_for
 {
 	my $service = uc shift;
@@ -78,6 +81,25 @@ sub __base_path_for_tasks
 	return __base_path_for('tasks');
 }
 
+sub request_session_info
+{
+	my $req = shift;
+
+	my $id = $req->header(HEADER_SESSION_ID());
+	my $token = $req->header(HEADER_SESSION_TOKEN());
+	return unless $id and $token;
+
+	return session_check({ id => $id, token => $token });
+}
+
+sub request_permissions
+{
+	my ($login, $project) = @_;
+
+	return {
+	};
+}
+
 sub projects_parse_request
 {
 	my ($req, $params) = @_;
@@ -102,18 +124,100 @@ sub projects_parse_request
 	}
 
 	(my $property, $tail) = split qr{/}, $tail, 2;
-	$req_info->{property} = $property;
+	$req_info->{property} = lc $property;
 
 	return $req_info;
 }
 
+# for projects
+sub PERMISSION_DELETE_PROJECT()		{ 'Delete Project' }
+sub PERMISSION_READ_PROJECT()		{ 'Read Project' }
+sub PERMISSION_UPDATE_PROJECT()		{ 'Update Project' }
+
+sub PERMISSION_CREATE_ROLE()		{ 'Create Role' }
+sub PERMISSION_DELETE_ROLE()		{ 'Delete Role' }
+sub PERMISSION_READ_ROLE()		{ 'Read Role' }
+sub PERMISSION_UPDATE_ROLE()		{ 'Update Role' }
+
+sub PERMISSION_CREATE_GROUP()		{ 'Create User Group' }
+sub PERMISSION_DELETE_GROUP()		{ 'Delete User Group' }
+sub PERMISSION_READ_GROUP()		{ 'Read User Group' }
+sub PERMISSION_UPDATE_GROUP()		{ 'Update User Group' }
+
 sub projects_access_denied
 {
-	my $req_info = shift;
+	my ($req_info, $req) = @_;
 
-	# FIXME + authorized + has permissions
+	my $login = request_session_info($req);
+	unless ($login) {
+		$req_info->{status} = HTTP_UNAUTHORIZED;
+		return 1;
+	}
 
-	return 0;
+	# project creation
+	return 0 if $req_info->{method} eq 'POST' and not $req_info->{project_id};
+
+	# check whether project exist
+	return 0 if $req_info->{action} and $req_info->{action} eq 'exist';
+
+	if ($req_info->{method} eq 'GET' and not $req_info->{project_id}) {
+		my (@projects, @allowed);
+
+		@projects = split /,/, $req_info->{params}{names};
+		foreach my $p (@projects) {
+			my $perms_ref = request_permissions($login, $p);
+
+			next unless $perms_ref->{ PERMISSION_READ_PROJECT() };
+			push @allowed, $p;
+		}
+
+		return 1 unless @allowed;
+		$req_info->{params}{name} = join ',', @allowed;
+
+		return 0;
+	}
+
+	my $perms_ref = request_permissions($login, $req_info->{project_id});
+
+	$req_info->{status} = HTTP_FORBIDDEN;
+	return !$perms_ref->{ PERMISSION_UPDATE_PROJECT() }
+		if $req_info->{action} and $req_info->{action} =~ /update/msxi;
+
+	if ($req_info->{property}) {
+		foreach my $prop (qw(issuetypes issuestates issuepriorities)) {
+			next if $prop ne $req_info->{property};
+
+			return !$perms_ref->{ PERMISSION_READ_PROJECT() }
+				if $req_info->{method} eq 'GET';
+
+			return !$perms_ref->{ PERMISSION_UPDATE_PROJECT() };
+		}
+
+		if ($req_info->{property} eq 'roles') {
+			return !$perms_ref->{ PERMISSION_READ_ROLE() }
+				if $req_info->{method} eq 'GET';
+			return !$perms_ref->{ PERMISSION_UPDATE_ROLE() }
+				if $req_info->{method} eq 'PUT';
+			return !$perms_ref->{ PERMISSION_CREATE_ROLE() }
+				if $req_info->{method} eq 'POST';
+			return !$perms_ref->{ PERMISSION_DELETE_ROLE() }
+				if $req_info->{method} eq 'DELETE';
+		}
+
+		if ($req_info->{property} eq 'groups') {
+			return !$perms_ref->{ PERMISSION_READ_GROUP() }
+				if $req_info->{method} eq 'GET';
+			return !$perms_ref->{ PERMISSION_UPDATE_GROUP() }
+				if $req_info->{method} eq 'PUT';
+			return !$perms_ref->{ PERMISSION_CREATE_GROUP() }
+				if $req_info->{method} eq 'POST';
+			return !$perms_ref->{ PERMISSION_DELETE_GROUP() }
+				if $req_info->{method} eq 'DELETE';
+		}
+	}
+
+	# forbid all other requests
+	return 1;
 }
 
 sub projects_process_request
@@ -153,9 +257,30 @@ sub tasks_parse_request
 	die 'not implemented yet';
 }
 
+# for issues
+sub PERMISSION_READ_ISSUE()		{ 'Read Issue' }
+sub PERMISSION_CREATE_ISSUE()		{ 'Create Issue' }
+sub PERMISSION_DELETE_ISSUE()		{ 'Delete Issue' }
+sub PERMISSION_UPDATE_ISSUE()		{ 'Update Issue' }
+
+sub PERMISSION_VIEW_WATCHERS()		{ 'View Watchers' }
+sub PERMISSION_UPDATE_WATCHERS()	{ 'Update Watchers' }
+
+sub PERMISSION_ADD_ATTACHMENT()		{ 'Add Attachment' }
+sub PERMISSION_DELETE_ATTACHMENT()	{ 'Delete Attachment' }
+sub PERMISSION_UPDATE_ATTACHMENT()	{ 'Update Attachment' }
+
+sub PERMISSION_READ_COMMENT()		{ 'Read Comment' }
+sub PERMISSION_CREATE_COMMENT()		{ 'Create Comment' }
+sub PERMISSION_DELETE_OWN_COMMENT()	{ 'Delete Own Comment' }
+sub PERMISSION_UPDATE_OWN_COMMENT()	{ 'Update Own Comment' }
+
+#sub PERMISSION_DELETE_NOT_OWN_COMMENT()	{ 'Delete Not Own and Permanent Comment Delete' }
+#sub PERMISSION_UPDATE_NOT_OWN_COMMENT()	{ 'Update Not Own Comment' }
+
 sub tasks_access_denied
 {
-	my $req_info = shift;
+	my ($req_info, $req) = @_;
 
 	# FIXME
 
@@ -187,11 +312,27 @@ sub users_parse_request
 
 sub users_access_denied
 {
-	my $req_info = shift;
+	my ($req_info, $req) = @_;
 
-	# FIXME
+	my $login = request_session_info($req);
+	unless ($login) {
+		$req_info->{status} = HTTP_UNAUTHORIZED;
+		return 1;
+	}
 
-	return 0;
+	# registration
+	return 0 if $req_info->{method} eq 'POST' and not $req_info->{login};
+
+	# everyone can read others
+	return 0 if $req_info->{method} eq 'GET';
+
+	# everyone may update self
+	return 0 if $req_info->{login} and $req_info->{login} eq $login;
+
+	# nobody can modify others
+	$req_info->{status} = HTTP_FORBIDDEN;
+
+	return 1;
 }
 
 sub users_process_request
