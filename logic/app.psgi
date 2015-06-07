@@ -83,6 +83,14 @@ my $session = sub {
 		return send_response(session_login($req->content(), get_session_info($req)));
 	}
 
+	if ($path =~ m{^ /check  $}msx) {
+		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
+			if $req->method() ne 'GET';
+
+		my $json = session_check(get_session_info($req));
+		return send_response(HTTP_OK, [], [to_json($json)]);
+	}
+
 	if ($path =~ m{^ /logout $}msx) {
 		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'PUT';
