@@ -1,0 +1,208 @@
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none; }
+
+html {
+  background: #ccc;
+  min-height: 100%;
+  font-family: sans-serif;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-direction: column; }
+
+body {
+  margin: 0;
+  padding: 0 15px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -webkit-flex: auto;
+  flex: auto; }
+
+h1, h2, h3 {
+  text-align: center;
+  color: #3066BE; }
+
+a {
+  text-decoration: none;
+  color: #279AF1; }
+
+a:hover {
+  text-decoration: underline; }
+
+.header {
+  width: 100%;
+  max-width: 960px;
+  min-width: 430px;
+  margin: 0 auto 30px;
+  padding: 30px 0 10px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: nowrap;
+  -webkit-flex-wrap: nowrap;
+  justify-content: space-between;
+  -webkit-justify-content: space-between;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-bottom: 1px groove #aaa; }
+
+.main {
+  width: 100%;
+  max-width: 960px;
+  min-width: 430px;
+  margin: auto;
+  flex-grow: 1;
+  -webkit-flex-grow: 1;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box; }
+
+.footer {
+  background: #999;
+  width: 100%;
+  max-width: 960px;
+  min-width: 430px;
+  color: #eee;
+  margin: auto;
+  padding: 15px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box; }
+
+.nav, .form {
+  margin: -5px 0 0 -5px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: wrap;
+  -webkit-flex-wrap: wrap; }
+
+.nav-itm {
+  width: 130px;
+  height: 50px;
+  font-size: 1.5rem;
+  color: #eee;
+  text-decoration: none;
+  margin: 5px 0 0 5px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  align-items: center; }
+  .nav-itm a {
+    padding: 1em;
+    display: block;
+    font-size: .7em;
+    text-align: center;
+    color: #888; }
+  .nav-itm a:hover {
+    color: #279AF1;
+    text-decoration: none; }
+
+.active a {
+  color: #279AF1;
+  text-decoration: none; }
+
+.registration form {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center; }
+
+.registration form a {
+  font-size: .9em;
+  margin: .6em; }
+
+input,
+textarea {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  margin: 10px;
+  padding: 10px;
+  max-width: 50%;
+  font-size: .8em;
+  border: none;
+  border-radius: 10px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box; }
+
+textarea {
+  margin: 1em 0em; }
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 1em .2em #7CC6FE; }
+
+form button[type=submit] {
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: .9em;
+  color: #aaa;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.6); }
+
+form button[type=submit]:hover {
+  background: white;
+  color: #7CC6FE; }
+
+.left {
+  width: 100%;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex; }
+  .left ul {
+    display: table; }
+  .left li {
+    display: table-row; }
+    .left li p {
+      padding: 1em;
+      border-bottom: 1px solid #aaa;
+      display: table-cell; }
+  .left a {
+    margin: .5em; }
+  .left .name,
+  .left .responsible,
+  .left .settings,
+  .left .remove {
+    padding: .8em;
+    margin: 0;
+    display: table-cell;
+    border-bottom: 1px solid #aaa; }
+  .left .remove {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold; }
+    .left .remove a {
+      color: black; }
+    .left .remove a:hover {
+      color: red;
+      text-decoration: none; }
