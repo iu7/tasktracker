@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+
+    <persistence-unit name="PROJECTS" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>jdbc/postgres_test</jta-data-source>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.Group</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.users.GroupsUsers</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.roles.GroupRoles</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.roles.Role</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.types.IssueType</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.states.IssueState</class>
+        <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.priorities.IssuePriority</class>
+        <properties>
+            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="eclipselink.logging.level" value="INFO"/>
+        </properties>
+    </persistence-unit>
+</persistence>
