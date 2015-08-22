@@ -11,11 +11,12 @@ use HTTP::Status qw(:constants);
 use HTTP::Request;
 use HTTP::Request::Common qw(PUT POST GET DELETE);
 
+use Data::Dumper;
 my $app = Plack::Util::load_psgi 'app.psgi';
 my $test = Plack::Test->create($app);
 
 # users, TODO: make it more pretty (use delete)
-if (0) {
+if (1) {
 # create user
 	my $content = to_json({
 		name		=> 'name',
@@ -25,6 +26,7 @@ if (0) {
 	});
 	my $res = $test->request(POST '/users', Content => $content);
 	is $res->code(), HTTP_CREATED;
+	print Dumper $res->as_string();
 
 # create user (one more time)
 	$content = to_json({
@@ -65,7 +67,7 @@ if (0) {
 }
 
 # session
-if (0) {
+if (1) {
 # login
 	my $content = '{"login":"spectre","password":"827ccb0eea8a706c4c34a16891f84e7b"}';
 	my $res = $test->request(POST '/session/login', Content => $content);
@@ -107,6 +109,7 @@ if (1) {
 # create project
 	my $res = $test->request(POST '/projects', Content => $content);
 	is $res->code(), HTTP_CREATED;
+	print Dumper $res->as_string();
 
 # check project exists
 	$res = $test->request(GET '/projects/test/exist');
