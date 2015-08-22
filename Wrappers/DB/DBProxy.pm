@@ -16,6 +16,7 @@ our @EXPORT_OK = qw(
 	db_proxy_select_row
 	db_proxy_select_array
 	db_proxy_execute_query
+	db_proxy_execute_query_noreturn
 );
 
 our %EXPORT_TAGS = (
@@ -121,10 +122,21 @@ sub db_proxy_execute_query
 	my ($query, @args) = @_;
 
 	my $dbh = __rw_dbh();
-	my $ret = $dbh->do($query, undef, @args)
-		or croak $dbh->errstr();
+	my $sth = $dbh->prepare($query);
+	$sth->execute(@args);
 
-	return $ret;
+	return $sth->fetchall_arrayref({});
+}
+
+sub db_proxy_execute_query_noreturn
+{
+	my ($query, @args) = @_;
+
+	my $dbh = __rw_dbh();
+	my $sth = $dbh->prepare($query);
+	$sth->execute(@args);
+
+	return 1;
 }
 
 sub db_proxy_table_exists
