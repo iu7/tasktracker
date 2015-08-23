@@ -254,29 +254,36 @@ sub tasks_parse_request
 {
 	my ($req, $params) = @_;
 
-	die 'not implemented yet';
+	my $path = $req->path();
+	my $method = $req->method();
+
+	my ($task_id, $tail) = split qr{/}, substr($path, 1), 2;
+	my $req_info = {
+		path		=> $path,
+		method		=> $method,
+		params		=> $params,
+		task_id		=> $task_id,
+	};
+	return $req_info unless $tail;
+
+	my ($property, $property_id) = split qr{/}, $tail, 2;
+	$req_info->{property} = lc $property;
+	$req_info->{property_id} = $property_id;
+
+	return $req_info;
 }
 
 # for issues
 sub PERMISSION_READ_ISSUE()		{ 'Read Issue' }
 sub PERMISSION_CREATE_ISSUE()		{ 'Create Issue' }
-sub PERMISSION_DELETE_ISSUE()		{ 'Delete Issue' }
 sub PERMISSION_UPDATE_ISSUE()		{ 'Update Issue' }
-
-sub PERMISSION_VIEW_WATCHERS()		{ 'View Watchers' }
-sub PERMISSION_UPDATE_WATCHERS()	{ 'Update Watchers' }
 
 sub PERMISSION_ADD_ATTACHMENT()		{ 'Add Attachment' }
 sub PERMISSION_DELETE_ATTACHMENT()	{ 'Delete Attachment' }
-sub PERMISSION_UPDATE_ATTACHMENT()	{ 'Update Attachment' }
 
 sub PERMISSION_READ_COMMENT()		{ 'Read Comment' }
 sub PERMISSION_CREATE_COMMENT()		{ 'Create Comment' }
-sub PERMISSION_DELETE_OWN_COMMENT()	{ 'Delete Own Comment' }
 sub PERMISSION_UPDATE_OWN_COMMENT()	{ 'Update Own Comment' }
-
-#sub PERMISSION_DELETE_NOT_OWN_COMMENT()	{ 'Delete Not Own and Permanent Comment Delete' }
-#sub PERMISSION_UPDATE_NOT_OWN_COMMENT()	{ 'Update Not Own Comment' }
 
 sub tasks_access_denied
 {
@@ -287,10 +294,64 @@ sub tasks_access_denied
 	return 0;
 }
 
+sub tasks_get_id
+{
+	my $json = eval { from_json(shift) };
+	return unless $json;
+
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $base_url = __base_path_for_projects();
+
+	my $request = HTTP::Request->new('POST');
+	$request->uri("$base_url/$json->{project_id}/incAndGetLastTaskId");
+
+	my $resp = $ua->request($request);
+	return unless $resp->code() == HTTP_OK;
+
+	my $resp_content = eval { from_json($resp->content()) };
+	return unless $resp_content;
+
+	$json->{id} = $resp_content->{LastTaskId};
+
+	return to_json($json);
+}
+
 sub tasks_process_request
 {
 	my $req_info = shift;
-	die 'not implemented yet';
+
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $base_url = __base_path_for_tasks();
+	my $tail = $req_info->{task_id} ? "$req_info->{path}" : q{};
+
+	my $resp;
+	if ($req_info->{method} eq 'GET' or $req_info->{method} eq 'DELETE') {
+		my @args_pairs;
+		foreach my $key (keys %{ $req_info->{params} }) {
+			push @args_pairs, "$key=$req_info->{params}{$key}";
+		}
+
+		$resp = $ua->get("${base_url}${tail}?" . join '&', @args_pairs);
+	} else {
+		my $request = HTTP::Request->new($req_info->{method});
+
+		$request->uri($base_url . $tail);
+		$request->content($req_info->{params});
+		$request->header('Content-Type' => 'application/json');
+
+		# this is new task creation
+		if (not $tail and $req_info->{method} eq 'POST') {
+			my $body = tasks_get_id($req_info->{params});
+			return 400, [], [ 'tasks_get_id failed' ];
+
+			$request->content($body);
+		}
+
+		$resp = $ua->request($request);
+	}
+	my $content = $resp->content();
+
+	return ($resp->code(), [ 'Content-Length' => length $content ], [ $content ]);
 }
 
 sub users_parse_request

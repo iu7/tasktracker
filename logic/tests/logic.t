@@ -14,7 +14,6 @@ use HTTP::Request::Common qw(PUT POST GET DELETE);
 my $app = Plack::Util::load_psgi 'app.psgi';
 my $test = Plack::Test->create($app);
 
-# users, TODO: make it more pretty (use delete)
 if (0) {
 # create user
 	my $content = to_json({
@@ -91,7 +90,7 @@ if (0) {
 }
 
 # projects
-if (1) {
+if (0) {
 	my $content = to_json({
 		name		=> 'test',
 		description	=> 'Test description of our project',
@@ -340,6 +339,13 @@ if (1) {
 
 # tasks: FIXME
 if (1) {
+	# create task
+	my $content = '{"id":1,"name":"tsk_name","description":"descr","project_id":1,"priority_id":2,"type_id":3,"state_id":4,"assignee_id":5,"creator_id":6}';
+	my $res = $test->request(POST '/tasks', Content => $content);
+	is $res->code(), HTTP_CREATED;
+
+	use Data::Dumper;
+	print Dumper $res->content();
 }
 
 done_testing();
