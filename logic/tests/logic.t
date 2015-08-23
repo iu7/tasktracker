@@ -11,6 +11,7 @@ use HTTP::Status qw(:constants);
 use HTTP::Request;
 use HTTP::Request::Common qw(PUT POST GET DELETE);
 
+use Data::Dumper;
 my $app = Plack::Util::load_psgi 'app.psgi';
 my $test = Plack::Test->create($app);
 
@@ -24,6 +25,7 @@ if (0) {
 	});
 	my $res = $test->request(POST '/users', Content => $content);
 	is $res->code(), HTTP_CREATED;
+	print Dumper $res->as_string();
 
 # create user (one more time)
 	$content = to_json({
@@ -106,6 +108,7 @@ if (0) {
 # create project
 	my $res = $test->request(POST '/projects', Content => $content);
 	is $res->code(), HTTP_CREATED;
+	print Dumper $res->as_string();
 
 # check project exists
 	$res = $test->request(GET '/projects/test/exist');
