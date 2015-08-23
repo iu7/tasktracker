@@ -11,6 +11,8 @@ import java.io.Serializable;
 @NamedQueries({
 	@NamedQuery(name = GroupsUsers.FIND_ALL_GROUPS_USERS,
 		    query = "SELECT g FROM GroupsUsers g WHERE g.projectId = ?1 AND g.groupId = ?2"),
+	@NamedQuery(name = GroupsUsers.FIND_ALL_USER_GROUPS,
+		    query = "SELECT g FROM GroupsUsers g WHERE g.projectId = ?1 AND g.userId = ?2"),
 	@NamedQuery(name = GroupsUsers.FIND_ALL_USER_PROJECTS,
 		    query = "SELECT g FROM GroupsUsers g WHERE g.userId = ?1"),
 })
@@ -20,6 +22,7 @@ public class GroupsUsers {
 
     public static final String FIND_ALL_GROUPS_USERS  = "GroupsUsers.findAllGroupsUsers";
     public static final String FIND_ALL_USER_PROJECTS = "GroupsUsers.findAllUserProjects";
+    public static final String FIND_ALL_USER_GROUPS   = "GroupsUsers.findAllUserGroups";
 
     @Id
     @Column(name = "project_id")
