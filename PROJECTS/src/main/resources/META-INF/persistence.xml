@@ -6,7 +6,7 @@
 
     <persistence-unit name="PROJECTS" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>jdbc/postgres_test</jta-data-source>
+        <jta-data-source>jdbc/remote_postgres</jta-data-source>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.projects.Project</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.Group</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.groups.users.GroupsUsers</class>
@@ -16,7 +16,7 @@
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.states.IssueState</class>
         <class>ru.bmstu.iu7.rsoi.gulyy.coursework.issue.priorities.IssuePriority</class>
         <properties>
-            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
             <property name="eclipselink.logging.level" value="INFO"/>
         </properties>
     </persistence-unit>

@@ -12,13 +12,13 @@ import java.io.Serializable;
 	@NamedQuery(name = GroupsUsers.FIND_ALL_GROUPS_USERS,
 		    query = "SELECT g FROM GroupsUsers g WHERE g.projectId = ?1 AND g.groupId = ?2"),
 	@NamedQuery(name = GroupsUsers.FIND_ALL_USER_PROJECTS,
-		    query = "SELECT DISTINCT project_id FROM GroupsUsers WHERE user_id = ?1"),
+		    query = "SELECT g FROM GroupsUsers g WHERE g.userId = ?1"),
 })
 @IdClass(GroupsUsersPK.class)
 @Table(name = "groups_users")
 public class GroupsUsers {
 
-    public static final String FIND_ALL_GROUPS_USERS = "GroupsUsers.findAllGroupsUsers";
+    public static final String FIND_ALL_GROUPS_USERS  = "GroupsUsers.findAllGroupsUsers";
     public static final String FIND_ALL_USER_PROJECTS = "GroupsUsers.findAllUserProjects";
 
     @Id
