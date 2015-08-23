@@ -12,8 +12,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.net.URI;
 
 /**
  * @author Konstantin Gulyy
@@ -174,14 +176,20 @@ public class RoleResource {
     }
 
     @GET
-    @Path("{projectName}/roles/{id}/permissions/{name}")
-    public Permission getPermission(@PathParam("projectName") String projectName, @PathParam("id") int id
-                                    ,@PathParam("name") String permissionName) {
+    @Path("{projectName}/roles/{id}/permissions")
+    public List<Permission> getPermissions(@PathParam("projectName") String projectName, @PathParam("id") int id) {
         RolePK pk = new RolePK(id, projectName);
         Role role = em.find(Role.class, pk);
+        if (role == null) {
+            return null;
+        }
 
-        Permission permission = new Permission(permissionName, role.getPermissions().get(permissionName));
+        List<Permission> result = new ArrayList<Permission>();
+        for (Map.Entry<String, Boolean> entry : role.getPermissions().entrySet()) {
+            Permission perm = new Permission(entry.getKey(), entry.getValue());
+            result.add(perm);
+        }
 
-        return permission;
+        return result;
     }
 }
