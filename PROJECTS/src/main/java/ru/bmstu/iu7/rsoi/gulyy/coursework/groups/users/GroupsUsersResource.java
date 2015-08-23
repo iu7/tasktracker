@@ -70,6 +70,17 @@ public class GroupsUsersResource {
     }
 
     @GET
+    @Path("/list_for_user/{userName}")
+    public List<GroupsUsers> getAllGroupsUsers(@PathParam("userName") String userName) {
+
+        Query query = em.createNamedQuery(GroupsUsers.FIND_ALL_USER_PROJECTS);
+        query.setParameter(1, userName);
+
+        List<GroupsUsers> groupsUsersList = query.getResultList();
+        return groupsUsersList;
+    }
+
+    @GET
     @Path("/{projectName}/groups/{id}/users")
     public List<GroupsUsers> getAllGroupsUsers(@PathParam("projectName") String projectName,
                                                @PathParam("id") int groupId) {
