@@ -15,7 +15,7 @@ use Data::Dumper;
 my $app = Plack::Util::load_psgi 'app.psgi';
 my $test = Plack::Test->create($app);
 
-if (0) {
+if (1) {
 # create user
 	my $content = to_json({
 		name		=> 'name',
@@ -66,7 +66,7 @@ if (0) {
 }
 
 # session
-if (0) {
+if (1) {
 # login
 	my $content = '{"login":"spectre","password":"827ccb0eea8a706c4c34a16891f84e7b"}';
 	my $res = $test->request(POST '/session/login', Content => $content);
@@ -92,7 +92,7 @@ if (0) {
 }
 
 # projects
-if (0) {
+if (1) {
 	my $content = to_json({
 		name		=> 'test',
 		description	=> 'Test description of our project',
@@ -343,7 +343,7 @@ if (0) {
 # tasks: FIXME
 if (1) {
 	# create task
-	my $content = '{"id":1,"name":"tsk_name","description":"descr","project_id":1,"priority_id":2,"type_id":3,"state_id":4,"assignee_id":5,"creator_id":6}';
+	my $content = '{"name":"tsk_name","description":"descr","project_id":1,"priority_id":2,"type_id":3,"state_id":4,"assignee_id":5,"creator_id":6}';
 	my $res = $test->request(POST '/tasks', Content => $content);
 	is $res->code(), HTTP_CREATED;
 

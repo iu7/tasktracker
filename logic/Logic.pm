@@ -342,7 +342,7 @@ sub tasks_process_request
 		# this is new task creation
 		if (not $tail and $req_info->{method} eq 'POST') {
 			my $body = tasks_get_id($req_info->{params});
-			return 400, [], [ 'tasks_get_id failed' ];
+			return 400, [], [ 'tasks_get_id failed' ] unless $body;
 
 			$request->content($body);
 		}
