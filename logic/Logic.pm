@@ -99,7 +99,7 @@ sub request_permissions
 	my $ua = LWP::UserAgent->new(timeout => 5);
 	my $base_url = __base_path_for_projects();
 
-	my $resp = $ua->get("$base_url/$project/$user_id/permissions");
+	my $resp = $ua->get("$base_url/$project/$login/permissions");
 	return {} unless $resp->code() == HTTP_OK;
 
 	my $content = $resp->content();
