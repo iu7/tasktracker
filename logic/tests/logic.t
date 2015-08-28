@@ -92,7 +92,7 @@ if (0) {
 }
 
 # projects
-if (0) {
+if (1) {
 	my $content = to_json({
 		name		=> 'test',
 		description	=> 'Test description of our project',
@@ -194,22 +194,10 @@ if (0) {
 	$res = $test->request(PUT '/projects/test/roles/1/permissions?nocheck=1', Content => $content);
 	is $res->code(), HTTP_OK;
 
-# check permission
-	$res = $test->request(GET '/projects/test/roles/1/permissions/Read Issue?nocheck=1');
-	is $res->code(), HTTP_OK;
-	$content = from_json($res->content());
-	ok $content->{value};
-
 # unset permission
-	$content = to_json({ name => 'Read Issue', value => 'false' });
-	$res = $test->request(PUT '/projects/test/roles/1/permissions?nocheck=1', Content => $content);
-	is $res->code(), HTTP_OK;
-
-# check permission
-	$res = $test->request(GET '/projects/test/roles/1/permissions/Read Issue?nocheck=1');
-	is $res->code(), HTTP_OK;
-	$content = from_json($res->content());
-	ok !$content->{value};
+	#$content = to_json({ name => 'Read Issue', value => 'false' });
+	#$res = $test->request(PUT '/projects/test/roles/1/permissions?nocheck=1', Content => $content);
+	#is $res->code(), HTTP_OK;
 
 # select all roles
 	$res = $test->request(GET '/projects/test/roles?nocheck=1');
@@ -282,7 +270,7 @@ if (0) {
 	is $res->code(), HTTP_OK;
 }
 
-if (1) {
+if (0) {
 	# create task
 	my $content = to_json({
 		name		=> 'tsk_name',
