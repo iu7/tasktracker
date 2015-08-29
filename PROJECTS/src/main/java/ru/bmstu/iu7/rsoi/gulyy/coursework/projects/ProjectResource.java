@@ -37,18 +37,8 @@ public class ProjectResource {
     }
 
     @GET
-    public List<Project> getProjects(@QueryParam("names") @DefaultValue("") String names) {
-
-        names = (names.equals(",")) ? "" : names;
-
-        List<String> inclList = Arrays.asList(names.split("\\s*,\\s*"));
-
-        Query query = em.createNamedQuery(Project.FIND_ALL);
-
-        query.setParameter("inclList", inclList);
-
-        List<Project> projects = query.getResultList();
-        return projects;
+    public List<Project> getProjects() {
+        return em.createNamedQuery(Project.FIND_ALL).getResultList();
     }
 
     @GET
