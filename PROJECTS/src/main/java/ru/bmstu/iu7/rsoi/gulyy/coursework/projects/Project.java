@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 
 @Entity
-@NamedQuery(name = Project.FIND_ALL, query = "SELECT p FROM Project p WHERE p.name IN :inclList")
+@NamedQuery(name = Project.FIND_ALL, query = "SELECT p FROM Project p")
 @Table(name = "PROJECTS")
 public class Project {
 
