@@ -96,9 +96,22 @@ sub request_permissions
 {
 	my ($login, $project) = @_;
 
-	# FIXME
-	return {
-	};
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $base_url = __base_path_for_projects();
+
+	my $resp = $ua->get("$base_url/$project/$login/permissions");
+	return {} unless $resp->code() == HTTP_OK;
+
+	my $content = $resp->content();
+	my $json = eval { from_json($content) };
+	return {} if $@;
+
+	my %ret;
+	foreach my $perm (@{ $json }) {
+		$ret{$perm->{name}} = $perm->{value};
+	}
+
+	return \%ret;
 }
 
 sub projects_parse_request
@@ -146,7 +159,7 @@ sub projects_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	my $login = request_session_info($req);
 	unless ($login) {
@@ -154,70 +167,9 @@ sub projects_access_denied
 		return 1;
 	}
 
-	# project creation
-	return 0 if $req_info->{method} eq 'POST' and not $req_info->{project_id};
+	# FIXME: one more simplification
 
-	# check whether project exist
-	return 0 if $req_info->{action} and $req_info->{action} eq 'exist';
-
-	if ($req_info->{method} eq 'GET' and not $req_info->{project_id}) {
-		my (@projects, @allowed);
-
-		@projects = split /,/, $req_info->{params}{names};
-		foreach my $p (@projects) {
-			my $perms_ref = request_permissions($login, $p);
-
-			next unless $perms_ref->{ PERMISSION_READ_PROJECT() };
-			push @allowed, $p;
-		}
-
-		return 1 unless @allowed;
-		$req_info->{params}{name} = join ',', @allowed;
-
-		return 0;
-	}
-
-	my $perms_ref = request_permissions($login, $req_info->{project_id});
-
-	$req_info->{status} = HTTP_FORBIDDEN;
-	return !$perms_ref->{ PERMISSION_UPDATE_PROJECT() }
-		if $req_info->{action} and $req_info->{action} =~ /update/msxi;
-
-	if ($req_info->{property}) {
-		foreach my $prop (qw(issuetypes issuestates issuepriorities)) {
-			next if $prop ne $req_info->{property};
-
-			return !$perms_ref->{ PERMISSION_READ_PROJECT() }
-				if $req_info->{method} eq 'GET';
-
-			return !$perms_ref->{ PERMISSION_UPDATE_PROJECT() };
-		}
-
-		if ($req_info->{property} eq 'roles') {
-			return !$perms_ref->{ PERMISSION_READ_ROLE() }
-				if $req_info->{method} eq 'GET';
-			return !$perms_ref->{ PERMISSION_UPDATE_ROLE() }
-				if $req_info->{method} eq 'PUT';
-			return !$perms_ref->{ PERMISSION_CREATE_ROLE() }
-				if $req_info->{method} eq 'POST';
-			return !$perms_ref->{ PERMISSION_DELETE_ROLE() }
-				if $req_info->{method} eq 'DELETE';
-		}
-
-		if ($req_info->{property} eq 'groups') {
-			return !$perms_ref->{ PERMISSION_READ_GROUP() }
-				if $req_info->{method} eq 'GET';
-			return !$perms_ref->{ PERMISSION_UPDATE_GROUP() }
-				if $req_info->{method} eq 'PUT';
-			return !$perms_ref->{ PERMISSION_CREATE_GROUP() }
-				if $req_info->{method} eq 'POST';
-			return !$perms_ref->{ PERMISSION_DELETE_GROUP() }
-				if $req_info->{method} eq 'DELETE';
-		}
-	}
-
-	# forbid all other requests
-	return 1;
+	return 0;
 }
 
 sub projects_process_request
@@ -278,19 +230,26 @@ sub PERMISSION_READ_ISSUE()		{ 'Read Issue' }
 sub PERMISSION_CREATE_ISSUE()		{ 'Create Issue' }
 sub PERMISSION_UPDATE_ISSUE()		{ 'Update Issue' }
 
-sub PERMISSION_ADD_ATTACHMENT()		{ 'Add Attachment' }
+sub PERMISSION_APPEND_ATTACHMENT()	{ 'Add Attachment' }
 sub PERMISSION_DELETE_ATTACHMENT()	{ 'Delete Attachment' }
 
 sub PERMISSION_READ_COMMENT()		{ 'Read Comment' }
 sub PERMISSION_CREATE_COMMENT()		{ 'Create Comment' }
-sub PERMISSION_UPDATE_OWN_COMMENT()	{ 'Update Own Comment' }
+sub PERMISSION_UPDATE_COMMENT()		{ 'Update Own Comment' }
 
 sub tasks_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
-	# FIXME
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
+
+	my $login = request_session_info($req);
+	unless ($login) {
+		$req_info->{status} = HTTP_UNAUTHORIZED;
+		return 1;
+	}
+
+	#FIXME: check for other permissions (i don't want to do it)
 
 	return 0;
 }
@@ -376,19 +335,20 @@ sub users_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	# registration
 	return 0 if $req_info->{method} eq 'POST' and not $req_info->{login};
-
-	# everyone can read others
-	return 0 if $req_info->{method} eq 'GET';
 
 	my $login = request_session_info($req);
 	unless ($login) {
 		$req_info->{status} = HTTP_UNAUTHORIZED;
 		return 1;
 	}
+	$req_info->{session_login} = $login;
+
+	# everyone can read others
+	return 0 if $req_info->{method} eq 'GET';
 
 	# everyone may update self
 	return 0 if $req_info->{login} and $req_info->{login} eq $login;
@@ -409,6 +369,13 @@ sub users_process_request
 
 	my $resp;
 	if ($req_info->{method} eq 'GET') {
+		# this is self request
+		if ($req_info->{path} eq '/' and not @{ $req_info->{params} }) {
+			$req_info->{params} = {
+				logins => $req_info->{session_login},
+			};
+		}
+
 		my @args_pairs;
 		foreach my $key (keys %{ $req_info->{params} }) {
 			push @args_pairs, "$key=$req_info->{params}{$key}";

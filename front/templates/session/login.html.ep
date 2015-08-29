@@ -19,12 +19,15 @@
 	<div class="main">
 		<div class="registration">
 			<h2>Authentication</h2>
-			<form action="">
+			% if ($msg) {
+				<h3><%= $msg %></h3>
+			% }
+			%= form_for login => (method => 'POST') => begin
 				<input type="text" id="login" name="login" placeholder="Login" autofocus>
 				<input type="password" id="password" name="password" placeholder="Password">
 				<button type="submit">Auth</button>
-				<a href="">Sign Up</a>
-			</form>
+				%= link_to 'Sign Up' => 'signup'
+			% end
 		</div>
 	</div>
 	<div class="footer"></div>
