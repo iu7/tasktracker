@@ -19,13 +19,16 @@
 	<div class="main">
 		<div class="registration">
 			<h2>Registration</h2>
-			<form action="">
-				<input type="text" id="name" name="name" placeholder="Name" autofocus>
-				<input type="email" id="email" name="email" placeholder="Email">
-				<input type="text" id="login" name="login" placeholder="Login">
-				<input type="password" id="password" name="password" placeholder="Password">
+			% if ($error) {
+			<h3><%= $error %></h3>
+			% }
+			%= form_for signup => (method => 'POST') => begin
+				<input required type="text" id="name" name="name" placeholder="Name" autofocus>
+				<input required type="email" id="email" name="email" placeholder="Email">
+				<input required type="text" id="login" name="login" placeholder="Login">
+				<input required type="password" id="password" name="password" placeholder="Password">
 				<button type="submit">Registration</button>
-			</form>
+			% end
 		</div>
 	</div>
 	<div class="footer"></div>
