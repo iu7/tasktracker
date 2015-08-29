@@ -87,7 +87,7 @@ my $session = sub {
 		return send_response(HTTP_METHOD_NOT_ALLOWED, [], [])
 			if $req->method() ne 'GET';
 
-		my $json = session_check(get_session_info($req));
+		my $json = session_check(get_session_info($req)) || {};
 		return send_response(HTTP_OK, [], [to_json($json)]);
 	}
 

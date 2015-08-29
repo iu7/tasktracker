@@ -159,7 +159,7 @@ sub projects_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	my $login = request_session_info($req);
 	unless ($login) {
@@ -241,7 +241,7 @@ sub tasks_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	my $login = request_session_info($req);
 	unless ($login) {
@@ -335,7 +335,7 @@ sub users_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	# registration
 	return 0 if $req_info->{method} eq 'POST' and not $req_info->{login};
