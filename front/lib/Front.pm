@@ -27,6 +27,10 @@ sub startup {
 	$r->post('/profile/email')->to('users#update_email')->name('users_update_email');
 
 	# Projects
+	$r->any([qw(GET POST)] => '/projects/register')->to('projects#register')->name('new_project');
+	$r->get('/projects')->to('projects#projects')->name('projects');
+	$r->post('/projects/:project_id/description')->to('projects#update_description')->name('projects_update_description');
+	$r->get('/projects/:project_id')->to('projects#project')->name('project');
 
 	# Tasks
 }

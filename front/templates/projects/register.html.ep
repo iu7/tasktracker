@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Home page</title>
+	<link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+<body>
+	<div class="header">
+		<div class="nav">
+			<div class="nav-itm active"><a href="">Projects</a></div>
+			<div class="nav-itm"><a href="">Tasks</a></div>
+			<div class="nav-itm"><a href="">Registration</a></div>
+		</div>
+	</div>
+	<div class="main">
+		<h2>Регистрация проекта</h2>
+		% if ($msg) {
+		<h3><%= $msg %></h3>
+		% }
+		%= form_for new_project => (method => 'POST') => begin
+		<div class="left">
+			<ul>
+				<li>
+					<p>Название</p>
+					<input type="text" name="name" class="name" value="" required>
+				</li>
+				<li>
+					<p>Префикс (для задач)</p>
+					<input type="text" name="prefix" class="name" value="">
+				</li>
+				<li>
+					<p>Описание</p>
+					<textarea class="name" name="description" rows="10" cols="50">
+					</textarea>
+				</li>
+				<li>
+					<button type="submit">Registration</button>
+				</li>
+			</ul>
+		</div>
+		% end
+	</div>
+	<div class="footer"></div>
+</body>
+</html>

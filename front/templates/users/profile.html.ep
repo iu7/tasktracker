@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Home page</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
@@ -27,7 +27,7 @@
 					<li>
 						<p>Имя</p>
 						<p>
-							<input type="text" name="name" value="<%= $args->{name} %>" required>
+							<input class="name" type="text" name="name" value="<%= $args->{name} %>" required>
 						</p>
 						<p><button type="submit">Сохранить</button></p>
 					</li>
@@ -37,7 +37,7 @@
 					<li>
 						<p>Email</p>
 						<p>
-							<input type="email" name="email" value="<%= $args->{email} %>" required>
+							<input class="name" type="email" name="email" value="<%= $args->{email} %>" required>
 						</p>
 						<p><button type="submit">Сохранить</button></p>
 					</li>
@@ -47,13 +47,13 @@
 					<li>
 						<p>Текущий пароль</p>
 						<p>
-							<input type="password" name="pass-old" required>
+							<input class="name" type="password" name="pass-old" required>
 						</p>
 					</li>
 					<li>
 						<p>Новый пароль</p>
 						<p>
-							<input type="password" name="pass-new" required>
+							<input class="name" type="password" name="pass-new" required>
 						</p>
 					</li>
 					<li>
