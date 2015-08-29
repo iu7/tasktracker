@@ -49,6 +49,7 @@ sub login {
 		my $json = $res->json();
 
 		$self->app->log->info('login success');
+		$self->session(login => $self->req()->param('login'));
 		$self->session($json);
 
 		return $self->redirect_to('index');
