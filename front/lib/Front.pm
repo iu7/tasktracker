@@ -10,19 +10,22 @@ sub startup {
 	$self->helper(header_session_token	=> sub { 'X-Session-Token' } );
 	$self->helper(task_args			=> sub { return {
 		priorities => [
-			'prio1',
-			'prio2',
-			'prio3',
+			'Низкий',
+			'Обычный',
+			'Высокий',
+			'Критический',
+			'Блокирующий',
 		],
 		states => [
-			'state1',
-			'state2',
-			'state3',
+			'Новая',
+			'Выполняется',
+			'Тестируется',
+			'Раскладывается',
+			'Закрыта',
 		],
 		types => [
-			'type1',
-			'type2',
-			'type3',
+			'Задача',
+			'Ошибка',
 		],
 	}});
 
