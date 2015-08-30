@@ -8,6 +8,23 @@ sub startup {
 	$self->helper(logic_base_url		=> sub { 'http://127.0.0.1:5010' } );
 	$self->helper(header_session_id		=> sub { 'X-Session-Id' } );
 	$self->helper(header_session_token	=> sub { 'X-Session-Token' } );
+	$self->helper(task_args			=> sub { return {
+		priorities => [
+			'prio1',
+			'prio2',
+			'prio3',
+		],
+		states => [
+			'state1',
+			'state2',
+			'state3',
+		],
+		types => [
+			'type1',
+			'type2',
+			'type3',
+		],
+	}});
 
 	# Router
 	my $r = $self->routes();
@@ -33,6 +50,12 @@ sub startup {
 	$r->get('/projects/:project_id')->to('projects#project')->name('project');
 
 	# Tasks
+	$r->any([qw(GET POST)] => '/tasks/register')->to('tasks#register')->name('new_task');
+	$r->post('/projects/:project_id/task/:task_id')->to('tasks#update_task');
+	$r->get('/projects/:project_id/task/:task_id')->to('tasks#task');
+	$r->get('/tasks')->to('tasks#tasks')->name('tasks');
+
+	# TODO: files and comments
 }
 
 1;
