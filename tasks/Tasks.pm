@@ -65,7 +65,7 @@ sub tasks_get
 			       creator_id creation_date modification_date);
 	my @specified_keys = grep { exists $args_ref->{$_} } @possible_keys;
 	my @pairs = map { "$_=?" } @specified_keys;
-	my $where = join ' and ', @pairs;
+	my $where = (join ' and ', @pairs) || '1 = 1';
 
 	my $table = TABLE_NAME_TASKS();
 	my $ret = eval { db_proxy_select_array(qq{
