@@ -2,31 +2,29 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Личный кабинет</title>
+	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm"><a href="">Projects</a></div>
-			<div class="nav-itm"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
-		</div>
-		<div class="form">
-			
+			<div class="nav-itm"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
 		<div class="registration">
-			<h2>Authentication</h2>
+			<h2>Авторизация</h2>
 			% if ($msg) {
 				<h3><%= $msg %></h3>
 			% }
 			%= form_for login => (method => 'POST') => begin
-				<input type="text" id="login" name="login" placeholder="Login" autofocus>
-				<input type="password" id="password" name="password" placeholder="Password">
-				<button type="submit">Auth</button>
-				%= link_to 'Sign Up' => 'signup'
+				<input type="text" id="login" name="login" placeholder="Логин" autofocus>
+				<input type="password" id="password" name="password" placeholder="Пароль">
+				<button type="submit">Войти</button>
+				%= link_to 'Зарегистрироваться' => 'signup'
 			% end
 		</div>
 	</div>

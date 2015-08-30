@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Новая задача</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm"><a href="">Projects</a></div>
-			<div class="nav-itm active"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
+			<div class="nav-itm"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm active"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
-		<h2>Tasks</h2>
+		<h2>Создание новой задачи</h2>
 		% if ($msg) {
 			<h3> <%= $msg %> </h3>
 		% }
@@ -86,8 +87,7 @@
 				</li>
 				<li>
 					<p>Описание</p>
-					<p><textarea name="description" id="" cols="30" rows="5">
-					</textarea></p>
+					<p><textarea name="description" id="" cols="30" rows="5"></textarea></p>
 				</li>
 				<li>
 					<button type="submit">Создать</button>

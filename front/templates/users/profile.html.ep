@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Личный кабинет</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm"><a href="">Projects</a></div>
-			<div class="nav-itm"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
-		</div>
-		<div class="form">
-			
+			<div class="nav-itm"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm active"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">

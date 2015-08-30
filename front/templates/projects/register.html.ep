@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Создание проекта</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm active"><a href="">Projects</a></div>
-			<div class="nav-itm"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
+			<div class="nav-itm active"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
-		<h2>Регистрация проекта</h2>
+		<h2>Создание проекта</h2>
 		% if ($msg) {
 		<h3><%= $msg %></h3>
 		% }
@@ -35,7 +36,7 @@
 					</textarea>
 				</li>
 				<li>
-					<button type="submit">Registration</button>
+					<button type="submit">Создать</button>
 				</li>
 			</ul>
 		</div>

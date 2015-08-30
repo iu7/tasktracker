@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Задачи</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm"><a href="">Projects</a></div>
-			<div class="nav-itm active"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
+			<div class="nav-itm"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm active"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
-		<h2>Tasks</h2>
+		<h2>Список задач</h2>
 		% if ($args->{msg}) {
 			<h3><%= $args->{msg} %> </h3>
 		% }
@@ -23,16 +24,19 @@
 			<ul>
 				<li>
 					<form action="/tasks" method="GET">
-						<input class="name" type="text" name="filter">
+						<input class="name" type="text" name="filter" placeholder="Запрос">
 						<button type="submit">Поиск</button>
 					</form>
 				</li>
 				<li>
-					<p>Name</p>
-					<p>Priority</p>
-					<p>State</p>
-					<p>Type</p>
-					<p>Assignee</p>
+					<a href="/tasks/register">Создать задачу</a>
+				</li>
+				<li>
+					<p>Тема</p>
+					<p>Приоритет</p>
+					<p>Состояние</p>
+					<p>Тип</p>
+					<p>Исполнитель</p>
 				</li>
 				% foreach my $t (@{ $args->{tasks} }) {
 				% my $ref = "/projects/$t->{project_id}/task/$t->{id}";
@@ -46,7 +50,6 @@
 				% }
 			</ul>
 		</div>
-
 	</div>
 	<div class="footer"></div>
 </body>

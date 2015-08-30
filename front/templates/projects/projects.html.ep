@@ -2,38 +2,40 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Список проектов</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm active"><a href="">Projects</a></div>
-			<div class="nav-itm"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
-		</div>
-		<div class="form">
-			
+			<div class="nav-itm active"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
 		<div class="left">
-			<h2>Projects</h2>
+			<h2>Список существующих проектов</h2>
 			% if ($args->{msg}) {
 				<h3><%= $args->{msg} %></h3>
 			% }
 			<ul>
 				<li>
-					<p class="name">Name</p>
-					<p class="responsible">Responsible</p>
-					<p class="settings">Settings</p>
+				<h4><a href="/projects/register">Создать проект</a></h4>
+				</li>
+
+				<li>
+					<p class="name">Название</p>
+					<p class="responsible">Владелец</p>
+					<p class="settings">Детали</p>
 				</li>
 				% foreach my $p (@{ $args->{projects} }) {
 					<li>
 						<p class="name"><%= $p->{name} %></p>
 						<p class="responsible"><%= $p->{managerId} %></p>
 						<p class="settings">
-							<a href="/projects/<%= $p->{name} %>">Детали</a>
+							<a href="/projects/<%= $p->{name} %>">Подробнее</a>
 						</p>
 					</li>
 				% }

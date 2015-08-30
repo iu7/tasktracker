@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Home page</title>
+	<title>Просмотр задачи</title>
 	<link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 	<div class="header">
 		<div class="nav">
-			<div class="nav-itm active"><a href="">Projects</a></div>
-			<div class="nav-itm"><a href="">Tasks</a></div>
-			<div class="nav-itm"><a href="">Registration</a></div>
+			<div class="nav-itm"><a href="/projects">Проекты</a></div>
+			<div class="nav-itm active"><a href="/tasks">Задачи</a></div>
+			<div class="nav-itm"><a href="/profile">Личный кабинет</a></div>
+			<div class="nav-itm"><a href="/signup">Регистрация</a></div>
 		</div>
 	</div>
 	<div class="main">
-		<h2>Task #<%= $info->{id} %></h2>
+		<h2>Задача #<%= $info->{id} %></h2>
 		% if ($info->{msg}) {
 			<h3> <%= $info->{msg} %> </h3>
 		% }
@@ -108,9 +109,9 @@
 					<p>Комментарии</p>
 					<ul>
 						<li>
-							<p>User</p>
-							<p>Comment</p>
-							<p>Date</p>
+							<p>Пользователь</p>
+							<p>Комментарий</p>
+							<p>Дата</p>
 						</li>
 						% for my $c (@{ $info->{comments} }) {
 						<li>
