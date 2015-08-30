@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Home page</title>
+	<link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+<body>
+	<div class="header">
+		<div class="nav">
+			<div class="nav-itm active"><a href="">Projects</a></div>
+			<div class="nav-itm"><a href="">Tasks</a></div>
+			<div class="nav-itm"><a href="">Registration</a></div>
+		</div>
+	</div>
+	<div class="main">
+		<h2><%= $args->{name} %></h2>
+		% if ($args->{msg}) {
+		<h3><%= $args->{msg} %></h3>
+		% }
+		<div class="left">
+			<ul>
+				<li>
+					<p>Владелец</p>
+					<input type="text" class="name" value="<%= $args->{managerId} %>" readonly>
+				</li>
+				<li>
+					<p>Префикс (для задач)</p>
+					<input type="text" class="name" value="<%= $args->{taskPrefix} %>" readonly>
+				</li>
+				<li>
+				%= form_for projects_update_description => (method => 'POST') => begin
+					<p>Описание</p>
+					<textarea name="description" rows="10" cols="50">
+						<%= $args->{description} %>
+					</textarea>
+					<button type="submit">Сохранить</button>
+				% end
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="footer"></div>
+</body>
+</html>

@@ -99,7 +99,7 @@ sub request_permissions
 	my $ua = LWP::UserAgent->new(timeout => 5);
 	my $base_url = __base_path_for_projects();
 
-	my $resp = $ua->get("$base_url/$project/$user_id/permissions");
+	my $resp = $ua->get("$base_url/$project/$login/permissions");
 	return {} unless $resp->code() == HTTP_OK;
 
 	my $content = $resp->content();
@@ -159,7 +159,7 @@ sub projects_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	my $login = request_session_info($req);
 	unless ($login) {
@@ -241,7 +241,7 @@ sub tasks_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	my $login = request_session_info($req);
 	unless ($login) {
@@ -335,19 +335,20 @@ sub users_access_denied
 {
 	my ($req_info, $req) = @_;
 
-	return 0 if $req->param('nocheck'); # dirty hack for tests
+	#return 0 if $req->param('nocheck'); # dirty hack for tests
 
 	# registration
 	return 0 if $req_info->{method} eq 'POST' and not $req_info->{login};
-
-	# everyone can read others
-	return 0 if $req_info->{method} eq 'GET';
 
 	my $login = request_session_info($req);
 	unless ($login) {
 		$req_info->{status} = HTTP_UNAUTHORIZED;
 		return 1;
 	}
+	$req_info->{session_login} = $login;
+
+	# everyone can read others
+	return 0 if $req_info->{method} eq 'GET';
 
 	# everyone may update self
 	return 0 if $req_info->{login} and $req_info->{login} eq $login;
@@ -368,6 +369,13 @@ sub users_process_request
 
 	my $resp;
 	if ($req_info->{method} eq 'GET') {
+		# this is self request
+		if ($req_info->{path} eq '/' and not @{ $req_info->{params} }) {
+			$req_info->{params} = {
+				logins => $req_info->{session_login},
+			};
+		}
+
 		my @args_pairs;
 		foreach my $key (keys %{ $req_info->{params} }) {
 			push @args_pairs, "$key=$req_info->{params}{$key}";
