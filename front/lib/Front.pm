@@ -51,11 +51,12 @@ sub startup {
 
 	# Tasks
 	$r->any([qw(GET POST)] => '/tasks/register')->to('tasks#register')->name('new_task');
+	$r->post('/projects/:project_id/task/:task_id/comment')->to('tasks#new_comment');
 	$r->post('/projects/:project_id/task/:task_id')->to('tasks#update_task');
 	$r->get('/projects/:project_id/task/:task_id')->to('tasks#task');
 	$r->get('/tasks')->to('tasks#tasks')->name('tasks');
 
-	# TODO: files and comments
+	# TODO: files
 }
 
 1;

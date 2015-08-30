@@ -1,6 +1,41 @@
 package Front::Controller::Tasks;
 use Mojo::Base 'Mojolicious::Controller';
 
+sub new_comment {
+	my $self = shift;
+
+	my $id = $self->session('id');
+	my $token = $self->session('token');
+	my $login = $self->session('login');
+	return $self->redirect_to('login')
+		unless $id and $token and $login;
+
+	my $task_id = $self->stash('task_id');
+	my $project_id = $self->stash('project_id');
+
+	my $ua = Mojo::UserAgent->new();
+	my $base_url = $self->logic_base_url();
+	my $tx = $ua->post("$base_url/tasks/$task_id/comments", {
+		$self->header_session_id()	=> $id,
+		$self->header_session_token()	=> $token,
+	}, json => {
+		user_id		=> $login,
+		project_id	=> $project_id,
+		comment		=> $self->req()->param('comment'),
+	});
+
+	if ($tx->success()) {
+		$self->flash(msg => 'Комментарий успешно добавлен');
+		return $self->redirect_to("/projects/$project_id/task/$task_id");
+	}
+
+	my $err = $tx->error();
+	$self->app->log->error($err->{message});
+	$self->flash(msg => "Неизвестная ошибка: $err->{message} ($err->{code})");
+
+	return $self->redirect_to("/projects/$project_id/task/$task_id");
+}
+
 sub tasks {
 	my $self = shift;
 
@@ -97,6 +132,14 @@ sub task {
 	my $resp = $tx->res()->json() || [{}];
 	my $json = $resp->[0];
 	$json->{msg} = $self->flash('msg');
+
+	if ($tx->success()) {
+		$tx = $ua->get("$base_url/tasks/$task_id/comments?project_id=$project_id", {
+			$self->header_session_id()	=> $id,
+			$self->header_session_token()	=> $token,
+		});
+		$json->{comments} = $tx->res()->json() || [];
+	}
 
 	if (not $tx->success()) {
 		my $err = $tx->error();

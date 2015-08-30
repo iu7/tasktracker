@@ -97,27 +97,39 @@
 				<li>
 					<button type="submit">Сохранить</button>
 				</li>
+			</ul>
+			</form>
+		</div>
 
-				<!--
+
+		<div class="left">
+			<ul>
 				<li>
-					<p>Comments</p>
+					<p>Комментарии</p>
 					<ul>
-						<li>'asdkfklajskdjf'</li>
-						<li>'asdkfklajskdjf'</li>
-						<li>'asdkfklajskdjf'</li>
+						<li>
+							<p>User</p>
+							<p>Comment</p>
+							<p>Date</p>
+						</li>
+						% for my $c (@{ $info->{comments} }) {
+						<li>
+							<p><%= $c->{user_id} %></p>
+							<p><%= $c->{comment} %></p>
+							<p><%= $c->{date} %></p>
+						</li>
+						% }
 					</ul>
 				</li>
 				<li>
-					<p>Add Comment</p>
-					<form action="" method="post">
-						<p>
-							<input type="text" name="name" value="name">
-						</p>
-						<p>
-							<button type="submit">Add</button>
-						</p>
+					<p>Добавить комментарий</p>
+					<form action="/projects/<%= $info->{project_id} %>/task/<%= $info->{id} %>/comment" method="post">
+						<p><input type="text" name="comment" value=""></p>
+						<p><button type="submit">Добавить</button></p>
 					</form>
 				</li>
+
+				<!--
 				<li>
 					<p>List of files</p>
 					<ul>
@@ -140,7 +152,6 @@
 			</ul>
 			</form>
 		</div>
-
 	</div>
 	<div class="footer"></div>
 </body>
